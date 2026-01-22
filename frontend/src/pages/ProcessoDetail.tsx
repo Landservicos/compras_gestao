@@ -122,6 +122,8 @@ const StatusSelector: React.FC<StatusSelectorProps> = ({
   </div>
 );
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
 const ProcessoDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate(); // <--- Hook para redirecionar
@@ -170,7 +172,6 @@ const ProcessoDetail: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
       if (file.size > MAX_FILE_SIZE) {
         toast.error(
@@ -205,8 +206,12 @@ const ProcessoDetail: React.FC = () => {
       toast.success("Arquivo enviado com sucesso!");
       setSelectedFile(null);
       notifyUpdate();
-    } catch (err) {
-      toast.error("Falha no upload. Tente novamente.");
+    } catch (err: any) {
+      if (err.response && err.response.status === 413) {
+        toast.error("O arquivo é muito grande. O limite é 10MB.");
+      } else {
+        toast.error("Falha no upload. Tente novamente.");
+      }
       console.error(err);
     } finally {
       setUploading(false);
@@ -501,6 +506,15 @@ const ProcessoDetail: React.FC = () => {
                     {uploading ? "Enviando..." : "Enviar"}
                   </button>
                 </form>
+                <div
+                  style={{
+                    fontSize: "0.8rem",
+                    color: "var(--color-text-secondary)",
+                    marginTop: "0.5rem",
+                  }}
+                >
+                  Tamanho máximo permitido: 10MB.
+                </div>
               </div>
             </div>
           )}
