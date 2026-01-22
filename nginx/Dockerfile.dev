@@ -1,0 +1,4 @@
+# Usa a imagem oficial do Nginx.
+FROM nginx:stable
+
+# A configuração em si (site.conf) será injetada via volume no docker-compose.override.yml.

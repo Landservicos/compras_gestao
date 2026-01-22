@@ -1,0 +1,288 @@
+.processos-container {
+  padding: 1.5rem;
+  background-color: var(--color-background); /* Cor de fundo da página */
+  min-height: 100vh;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.processos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.processos-header h1 {
+  font-size: 1.3rem;
+  color: var(--color-text-primary); /* Cor de texto principal */
+  text-transform: uppercase;
+}
+
+.processos-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-surface); /* Fundo branco */
+  border: 1px solid var(--color-border); /* Borda padrão */
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+}
+
+.search-bar svg {
+  color: var(--color-text-secondary); /* Cinza para ícones */
+  margin-right: 0.5rem;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 1rem;
+}
+
+.spacer {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 0.5rem;
+}
+
+.btn-relatorio {
+  display: flex;
+  align-items: center;
+  height: 35px;
+  gap: 0.5rem;
+  background-color: var(--color-primary); 
+  color: var(--color-surface);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-relatorio:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* --- ESTILOS DOS FILTROS --- */
+.btn-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-filter:hover {
+  background-color: var(--color-background-alt);
+  border-color: var(--color-primary);
+}
+
+.filters-panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filters-panel select,
+.filters-panel input[type="date"] {
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.9rem;
+  color: var(--color-text-primary);
+  min-width: 180px;
+}
+
+.btn-clear-filters {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: var(--color-danger);
+  border: 1px solid var(--color-danger);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-clear-filters:hover {
+  background-color: var(--color-danger);
+  color: white;
+}
+
+/* --- STATUS TEXT & ICONS (Tabela) --- */
+.status-text {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  padding: 0.35rem 0.75rem;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-pending { 
+  color: #92400e; 
+  background-color: var(--color-status-nao_concluido-bg);
+} 
+.status-parcial { 
+  color: #0369a1; /* Azul escuro para contraste */
+  background-color: var(--color-status-parcial-bg);
+}
+.status-concluido { 
+  color: #166534; 
+  background-color: var(--color-status-concluido-bg);
+}
+.status-arquivado { 
+  color: #374151; 
+  background-color: var(--color-status-arquivado-bg);
+}
+.status-cancelado { 
+  color: #991b1b; 
+  background-color: var(--color-status-cancelado-bg);
+}
+
+/* Icons colors matching text */
+.status-icon-nao_concluido { color: #f59e0b; }
+.status-icon-parcial { color: var(--color-info); }
+.status-icon-concluido { color: var(--color-success); }
+.status-icon-arquivado { color: var(--color-text-secondary); }
+.status-icon-cancelado { color: var(--color-danger); }
+
+/* --- BADGES DE FILTROS --- */
+.badge {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 4px 12px;
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    display: inline-flex;
+    align-items: center;
+}
+
+.no-results-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.no-results-icon {
+  color: var(--color-text-secondary);
+  opacity: 0.5;
+  margin-bottom: 0.5rem;
+}
+
+/* --- ESTILOS PARA O DROPDOWN DE RELATÓRIO --- */
+.report-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.report-options {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background-color: var(--color-surface);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 15;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  right: 0;
+  margin-top: 0.5rem;
+}
+
+.report-options button {
+  color: var(--color-text-primary);
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+}
+
+.report-options button:hover {
+  background-color: var(--color-background-alt);
+}
+
+/* --- BORDA COLORIDA NA TABELA POR STATUS --- */
+.user-table tbody tr.row-status-nao_concluido {
+  border-left: 4px solid var(--color-status-andamento);
+}
+.user-table tbody tr.row-status-parcial {
+  border-left: 4px solid var(--color-status-parcial);
+}
+.user-table tbody tr.row-status-concluido {
+  border-left: 4px solid var(--color-status-concluido);
+}
+.user-table tbody tr.row-status-arquivado {
+  border-left: 4px solid var(--color-status-arquivado);
+}
+.user-table tbody tr.row-status-cancelado {
+  border-left: 4px solid var(--color-status-cancelado);
+}
+
+/* Ajuste fino para a célula não colar na borda colorida */
+.user-table tbody tr.row-status-nao_concluido td:first-child,
+.user-table tbody tr.row-status-parcial td:first-child,
+.user-table tbody tr.row-status-concluido td:first-child,
+.user-table tbody tr.row-status-arquivado td:first-child,
+.user-table tbody tr.row-status-cancelado td:first-child {
+    padding-left: 1rem; /* Garante espaçamento visual */
+}
+
+/* Estilo do botão de visualização (FolderOpen) */
+.btn-view {
+  color: var(--color-text-secondary);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-view:hover {
+  background-color: rgba(76, 175, 80, 0.1); /* Verde suave */
+  color: var(--color-primary); /* Verde principal */
+  transform: scale(1.15); /* Leve aumento para feedback tátil */
+}

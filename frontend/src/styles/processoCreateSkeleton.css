@@ -1,0 +1,92 @@
+/* Reutilizando a animação de brilho de outros skeletons */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton-line {
+  background-color: #f0f0f0;
+  background-image: linear-gradient(
+    to right,
+    #f0f0f0 0%,
+    #e0e0e0 20%,
+    #f0f0f0 40%,
+    #f0f0f0 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 2000px 104px;
+  animation: shimmer 2s linear infinite;
+  border-radius: 6px;
+}
+
+/* Header Skeleton */
+.skeleton-h1 {
+  height: 32px;
+  width: 40%;
+}
+
+.skeleton-back-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-secondary);
+}
+
+.skeleton-back-link-text {
+  height: 20px;
+  width: 120px;
+}
+
+/* Form Skeleton */
+.skeleton-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.skeleton-label {
+  height: 20px;
+  width: 30%;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-input {
+  height: 45px;
+  width: 100%;
+}
+
+.skeleton-button {
+  height: 48px;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/*
+  Layout duplicado de processoCreate.css para garantir consistência
+*/
+.processo-create-page {
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.create-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 1600px;
+}
+
+.form-container {
+  background-color: var(--color-surface);
+  border-radius: 16px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 1600px;
+  border: 1px solid var(--color-border);
+}

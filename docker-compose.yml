@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:15
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    volumes:
+      - staticfiles_data:/code/staticfiles
+      - "${COMPRAS_PATH}:/code/media"
+    env_file:
+      - .env
+    environment:
+      - ALLOWED_HOSTS=localhost,127.0.0.1,backend,${HOST_IP}
+      - POSTGRES_HOST=db
+      - BACKEND_HOST=backend
+    expose:
+      - "8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    volumes:
+      - staticfiles_data:/code/staticfiles:ro
+      - "${COMPRAS_PATH}:/code/media:ro"
+    ports:
+      - "81:80"
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  db_data:
+  staticfiles_data:
+  certbot_data:
+  certbot_webroot:

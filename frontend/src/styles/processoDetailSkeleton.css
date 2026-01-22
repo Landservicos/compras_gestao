@@ -1,0 +1,107 @@
+/* Reusing the shimmer animation from processoSkeletonCard.css */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton-line,
+.skeleton-h1,
+.skeleton-back-link-text,
+.skeleton-detail-item,
+.skeleton-h4,
+.skeleton-file-item,
+.skeleton-upload-form {
+  background-color: #f0f0f0;
+  background-image: linear-gradient(
+    to right,
+    #f0f0f0 0%,
+    #e0e0e0 20%,
+    #f0f0f0 40%,
+    #f0f0f0 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 2000px 104px;
+  animation: shimmer 2s linear infinite;
+  border-radius: 6px;
+}
+
+/* Header Skeleton */
+.skeleton-h1 {
+  height: 32px;
+  width: 60%;
+}
+
+.skeleton-back-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-secondary);
+}
+
+.skeleton-back-link-text {
+  height: 20px;
+  width: 120px;
+}
+
+/* Content Skeleton */
+.skeleton-detail-item {
+  height: 50px;
+  width: 100%;
+}
+
+.skeleton-h4 {
+  height: 24px;
+  width: 40%;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+}
+
+.skeleton-file-item {
+  height: 40px;
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-upload-section {
+  margin-top: 2rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 2rem;
+}
+
+.skeleton-upload-form {
+  height: 42px;
+  width: 100%;
+}
+
+/*
+  The following styles are duplicated from processoDetail.css to ensure
+  the skeleton component has the same layout structure.
+*/
+.processo-detail-page {
+  padding: 1.5rem;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.processo-detail-content {
+  padding: 2rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background-color: var(--color-surface);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}

@@ -1,0 +1,103 @@
+.user-form {
+  display: flex;
+  flex-direction: column;
+  padding-right: 20px;
+  width: auto;
+  gap: 1.5rem;
+}
+
+/* Grid mais responsiva */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.6rem; /* Aumentado o gap vertical (primeiro valor) */
+}
+
+/* Quando a tela for mais larga que 600px → duas colunas */
+@media (min-width: 600px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.4rem 2rem;
+  }
+}
+
+/* Inputs que precisam ocupar a linha inteira */
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Grupos */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+/* Labels */
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+/* Inputs/Selects */
+.form-group input,
+.form-group select {
+  padding: 0.7rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background-color: var(--color-surface);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-shadow);
+}
+
+/* Desabilitado */
+.form-group input:disabled,
+.form-group select:disabled {
+  background-color: var(--color-background);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Botão estilo link */
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+/* Rodapé do formulário */
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+  /* A borda e o padding-top são removidos para melhor integração com o modal */
+  /* O modal que o contém agora é responsável pela separação visual. */
+}
+
+.form-footer .btn {
+  min-width: 110px;
+}

@@ -1,0 +1,344 @@
+.sidebar {
+  width: 280px;
+  background-color: var(--color-sidebar-background);
+  border-right: 1px solid var(--color-sidebar-border);
+  height: 100vh;
+  position: sticky; /* Fixo na tela para desktop */
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+  transform: translateX(0);
+  transition:
+    width 0.3s ease,
+    transform 0.3s ease;
+}
+
+.sidebar-header {
+  padding: 28px 20px;
+  border-bottom: 1px solid var(--color-sidebar-border);
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 20px; /* Adiciona um espaçamento vertical e horizontal */
+  border-bottom: 1px solid var(--color-sidebar-border);
+  position: relative; /* Necessário para posicionar o botão */
+  transition: all 0.3s ease;
+}
+
+.sidebar-logo {
+  height: 40px; /* Altura desejada para o logo */
+  width: auto; /* Largura se ajusta para manter a proporção */
+}
+
+.user-info-top {
+  display: flex;
+  justify-content: center; /* Centraliza o nome horizontalmente */
+  align-items: center; /* Centraliza verticalmente */
+  padding: 16px;
+  gap: 10px; /* Adiciona um espaço entre o ícone e o nome */
+  background-color: var(--color-sidebar-footer-background);
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--color-surface); /* Alterado para variável */
+  text-transform: uppercase;
+  margin: 10px 10px 0 10px; /* Adicionando margem para não colar na borda */
+}
+
+.user-info-top span {
+  font-size: 15px; /* Garante que o nome do usuário tenha o tamanho correto */
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 16px 12px;
+}
+
+.nav-item,
+.logout-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  font-family: var(--font-family-sans-serif);
+  color: var(--color-sidebar-text-muted);
+  text-decoration: none;
+  padding: 12px 14px;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 14px;
+  font-weight: 500;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.nav-item:hover,
+.logout-btn:hover {
+  background-color: var(--color-sidebar-item-hover);
+  color: var(--color-surface);
+}
+
+.nav-item.active {
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  font-weight: 600;
+}
+
+.nav-item.active svg {
+  stroke: var(--color-surface);
+}
+
+.logout-btn {
+  display: flex;
+  justify-content: center;
+  color: var(--color-background);
+}
+
+.logout-btn:hover {
+  background-color: var(--color-sidebar-item-hover);
+  color: var(--color-danger);
+}
+
+.sidebar-footer {
+  border-top: 1px solid var(--color-sidebar-border);
+  padding: 16px;
+}
+
+.sidebar-footer-info {
+  border-top: 1px solid var(--color-sidebar-border);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--color-sidebar-text-muted);
+  font-size: 10px;
+}
+
+.company-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Overlay para mobile */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.sidebar-overlay.open {
+  display: block;
+  opacity: 1;
+}
+
+/* --- Estilos para Sidebar Colapsada (Mini Sidebar) --- */
+
+.sidebar.collapsed {
+  width: 80px;
+}
+
+/* Botão de Toggle Absoluto - Novo Posicionamento */
+.sidebar-toggle-btn-absolute {
+    position: absolute;
+    right: -12px; /* Posiciona metade para fora da sidebar */
+    top: 60px; /* Logo abaixo do logo/user info */
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: var(--color-primary); /* Destaque */
+    border: 2px solid var(--color-sidebar-background); /* Borda da cor do fundo para separar */
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    z-index: 1001; /* Acima da sidebar */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.sidebar-toggle-btn-absolute:hover {
+    background-color: var(--color-primary-dark);
+    transform: scale(1.1);
+}
+
+/* Ocultar textos quando colapsado */
+.sidebar.collapsed .nav-item span,
+.sidebar.collapsed .user-info-top span,
+.sidebar.collapsed .company-name,
+.sidebar.collapsed .logout-btn span {
+  display: none;
+}
+
+/* Centralizar ícones quando colapsado */
+.sidebar.collapsed .nav-item,
+.sidebar.collapsed .logout-btn,
+.sidebar.collapsed .user-info-top {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.sidebar.collapsed .user-info-top {
+  padding: 16px 0;
+  gap: 0;
+  margin: 10px 0 0 0;
+}
+
+.sidebar.collapsed .logo-container {
+  padding: 15px 0;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar.collapsed .sidebar-logo {
+  height: 32px; /* Ajuste conforme o tamanho da sua logo redonda */
+  width: auto;
+  max-width: 100%;
+}
+
+.sidebar.collapsed .sidebar-footer-info {
+  justify-content: center;
+}
+
+/* --- Tooltips para Sidebar Colapsada --- */
+
+.sidebar.collapsed .nav-item,
+.sidebar.collapsed .logout-btn,
+.sidebar.collapsed .user-info-top {
+  position: relative; /* Necessário para posicionar o tooltip */
+}
+
+.sidebar.collapsed [data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  z-index: 1100;
+  margin-left: 12px;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  animation: fadeInTooltip 0.2s forwards;
+}
+
+@keyframes fadeInTooltip {
+  from {
+    opacity: 0;
+    transform: translate(-5px, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+/* --- Estilos para Submenu (Dropdown) --- */
+
+.submenu-toggle {
+  justify-content: flex-start; /* Mantém alinhado à esquerda */
+  position: relative;
+}
+
+.submenu-arrow {
+  margin-left: auto; /* Empurra a seta para a direita */
+  transition: transform 0.3s ease;
+  color: var(--color-sidebar-text-muted);
+}
+
+.submenu-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.submenu-list {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+  background-color: rgba(0, 0, 0, 0.02); /* Fundo levemente diferente */
+  border-radius: 8px;
+}
+
+.submenu-list.expanded {
+  max-height: 200px; /* Altura suficiente para os itens */
+  margin-bottom: 5px;
+}
+
+.nav-item.sub-item {
+  padding-left: 24px; /* Recuo para subitens */
+  font-size: 14px;
+  height: 40px;
+  color: var(--color-sidebar-text-light);
+}
+
+.sub-item-dot {
+  margin-right: 8px;
+  font-size: 18px;
+  line-height: 0;
+  color: var(--color-sidebar-text-light);
+}
+
+.nav-item.sub-item:hover .sub-item-dot {
+  color: var(--color-primary);
+}
+
+/* --- Media Queries para Responsividade --- */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+    width: 280px; /* Garante largura total no mobile */
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Esconde o botão de toggle no mobile, pois usa o menu hamburguer do header */
+  .sidebar-toggle-btn, .sidebar-toggle-btn-absolute {
+    display: none;
+  }
+
+  /* Reseta estilos de colapso se a classe estiver ativa no mobile */
+  .sidebar.collapsed {
+    width: 280px;
+  }
+  .sidebar.collapsed .nav-item span,
+  .sidebar.collapsed .user-info-top span,
+  .sidebar.collapsed .company-name,
+  .sidebar.collapsed .logout-btn span {
+    display: inline;
+  }
+  .sidebar.collapsed .nav-item,
+  .sidebar.collapsed .logout-btn {
+    justify-content: flex-start;
+    padding: 12px 14px;
+  }
+}

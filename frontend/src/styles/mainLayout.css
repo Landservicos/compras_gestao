@@ -1,0 +1,31 @@
+.main-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left 0.3s ease-in-out; /* Animação suave */
+  margin-left: 10px; /* Margem para a sidebar no desktop */
+}
+
+.content-area {
+  flex-grow: 1;
+  padding: 24px; /* Adiciona um padding padrão para as páginas */
+}
+
+.modal-footer-buttons {
+  display: flex;
+  justify-content: flex-end; /* Alinha os botões à direita */
+  gap: 1rem; /* Adiciona um espaço entre os botões */
+}
+
+/* Para telas menores, a sidebar vai sobrepor o conteúdo */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0; /* Nenhuma margem em mobile */
+    transition: none; /* Remove a transição de margem em mobile */
+  }
+}

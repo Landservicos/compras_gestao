@@ -1,0 +1,84 @@
+.skeleton-card {
+  background-color: var(--color-skeleton-background);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton-card > div,
+.skeleton-card > div > div {
+  background-color: var(--color-skeleton-base);
+  background-image: linear-gradient(
+    to right,
+    var(--color-skeleton-base) 0%,
+    var(--color-skeleton-shimmer) 20%,
+    var(--color-skeleton-base) 40%,
+    var(--color-skeleton-base) 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 2000px 104px;
+  animation: shimmer 2s linear infinite;
+  border-radius: 4px;
+}
+
+.skeleton-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+  background: transparent !important; /* O contêiner não deve ter fundo */
+}
+
+.skeleton-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.skeleton-status {
+  width: 80px;
+  height: 24px;
+  border-radius: 12px;
+}
+
+.skeleton-line {
+  height: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-title {
+  height: 1.2rem;
+  width: 80%;
+}
+
+.skeleton-subtitle {
+  width: 50%;
+  margin-bottom: 1.5rem;
+}
+
+.skeleton-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+  margin-top: auto;
+  background: transparent !important; /* O contêiner não deve ter fundo */
+}
+
+.skeleton-footer-text {
+  width: 40%;
+  height: 0.85rem;
+}

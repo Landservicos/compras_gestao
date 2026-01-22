@@ -1,0 +1,57 @@
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton-line {
+  background-color: #f0f0f0;
+  background-image: linear-gradient(
+    to right,
+    #f0f0f0 0%,
+    #e0e0e0 20%,
+    #f0f0f0 40%,
+    #f0f0f0 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 2000px 104px;
+  animation: shimmer 2s linear infinite;
+  border-radius: 6px;
+  /* Default height if not specified by specific class */
+  height: 20px;
+}
+
+.skeleton-title {
+  width: 300px;
+  height: 28px;
+}
+
+.skeleton-search {
+  width: 200px;
+  height: 36px;
+}
+
+.skeleton-action-btn {
+  width: 150px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.skeleton-th-80 {
+  width: 80%;
+}
+
+.skeleton-th-90 {
+  width: 90%;
+}
+
+.skeleton-th-70 {
+  width: 70%;
+}
+
+.skeleton-th-50 {
+  width: 50%;
+}

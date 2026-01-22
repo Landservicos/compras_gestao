@@ -1,0 +1,494 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-management-container {
+  padding: 1.5rem;
+  animation: fadeIn 0.3s ease-in-out;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.user-management-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.header-title h1 {
+  font-size: 1.75rem;
+  margin: 0;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.search-bar:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-shadow);
+}
+
+.search-bar svg {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+.search-bar input {
+  width: 100%;
+  min-width: 280px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.9rem;
+  padding: 0.6rem 0.75rem 0.6rem 2.25rem;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-list {
+  background-color: var(--color-surface);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  box-shadow: var(--box-shadow-sm);
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-table th,
+.user-table td {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+/* Garante que a última coluna (Ações) seja sempre centralizada e com largura ajustada */
+.user-table th:last-child,
+.user-table td:last-child {
+  text-align: center;
+  white-space: nowrap;
+  width: 1%; /* Truque para ocupar apenas o espaço necessário */
+}
+
+/* Remove a borda da última linha para não conflitar com o border-radius do container */
+.user-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.user-table th {
+  background-color: var(--color-background);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.user-table tbody tr:hover {
+  background-color: var(--color-background);
+}
+
+/* Select de Cargo */
+.role-selector-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.role-selector-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--color-text-secondary);
+  pointer-events: none;
+}
+
+.role-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 0.25rem 1.5rem 0.25rem 0;
+  width: 100%;
+}
+.role-select:focus {
+  outline: none;
+}
+
+.role-administrador {
+  color: var(--color-danger);
+}
+.role-compras {
+  color: var(--color-primary);
+}
+.role-obra {
+  color: var(--color-warning);
+}
+.role-financeiro {
+  color: var(--color-info);
+}
+.role-gestor {
+  color: #7c3aed;
+}
+.role-diretoria {
+  color: #db2777;
+}
+.role-dev {
+  color: #000;
+}
+
+/* Botões de Ação (Ícones) */
+.user-actions {
+  display: flex;
+  justify-content: center; /* Centraliza no desktop */
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.btn-icon:hover {
+  background-color: var(--color-background);
+  color: var(--color-danger);
+}
+
+.btn-secondary {
+  color: var(--color-primary);
+}
+.btn-tertiary {
+  color: var(--color-warning);
+}
+.btn-danger {
+  color: var(--color-danger);
+}
+
+/* Toggle Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 20px;
+  margin: 0 auto; /* Centraliza */
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+}
+input:checked + .slider {
+  background-color: var(--color-success);
+}
+input:checked + .slider:before {
+  transform: translateX(14px);
+}
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* === ESTILOS ORIGINAIS DO MODAL DE PERMISSÕES (PRESERVADOS) === */
+.permissions-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.permissions-select-all {
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.permissions-select-all label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 1.05em;
+  cursor: pointer;
+}
+.permissions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+.permissions-category {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.25rem;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+}
+.permissions-category:hover {
+  border-color: var(--color-primary-variant);
+  box-shadow: var(--box-shadow-md);
+}
+.permissions-category h4 {
+  font-size: 1.1em;
+  margin: 0 0 0.75rem 0;
+  color: var(--color-primary);
+  border-bottom: 2px solid var(--color-primary-shadow);
+  padding-bottom: 0.6rem;
+}
+.permissions-category label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.permissions-category input[type="checkbox"],
+.permissions-select-all input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--color-border);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+}
+.permissions-category input[type="checkbox"]:checked,
+.permissions-select-all input[type="checkbox"]:checked {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.permissions-category input[type="checkbox"]:checked::before,
+.permissions-select-all input[type="checkbox"]:checked::before {
+  content: "✔";
+  font-size: 12px;
+  color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* === RESPONSIVIDADE (MOBILE) === */
+@media (max-width: 768px) {
+  .user-management-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .header-actions,
+  .search-bar {
+    width: 100%;
+  }
+
+  /* Table to Cards */
+  .user-table thead {
+    display: none;
+  }
+  .user-table,
+  .user-table tbody,
+  .user-table tr,
+  .user-table td {
+    display: block;
+    width: 100%;
+  }
+  .user-table tr {
+    margin-bottom: 1rem;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+  }
+  .user-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: right;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .user-table td:last-child {
+    border-bottom: none;
+  }
+
+  .user-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-align: left;
+    margin-right: 1rem;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+  }
+
+  /* Ajustes Mobile */
+  .role-select {
+    width: auto;
+  }
+  .user-actions {
+    justify-content: flex-end;
+  }
+  .switch {
+    margin: 0;
+  }
+}
+
+/* === FORMULÁRIO DE EMPRESA (TENANT) === */
+.tenant-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0.5rem 0;
+}
+
+.tenant-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tenant-form label {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.tenant-form input {
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.tenant-form input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--color-primary-shadow);
+}
+
+.permission-submenu {
+  padding-left: 20px;
+}
+
+/* === CLASSES AUXILIARES PARA GERENCIAR EMPRESAS === */
+.input-with-icon-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.input-flex {
+  flex: 1;
+}
+
+.help-text {
+  color: var(--color-text-secondary);
+  font-size: 0.8em;
+  margin-top: 0.25rem;
+}
+
+.warning-text {
+  font-size: 0.9em;
+  color: var(--color-danger);
+  margin-top: 0.5rem;
+}
+
+/* === CLASSES PARA MANAGE CRDII === */
+.col-id {
+  width: 80px;
+}
+.col-actions {
+  width: 120px;
+}
+
+/* === CLASSES PARA USER MANAGEMENT === */
+.status-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

@@ -1,0 +1,101 @@
+/* Aumenta a largura do modal quando a classe 'modal-large' é aplicada */
+.modal-large {
+  max-width: 900px;
+}
+
+/* Estilos para o conteúdo do modal de processos */
+.processos-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0.5rem;
+}
+
+.processos-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.processos-modal-header .search-bar {
+  flex-grow: 1;
+  max-width: 400px;
+}
+
+.processos-modal-list {
+  max-height: 60vh;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.processos-modal-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.processos-modal-list th,
+.processos-modal-list td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.processos-modal-list th {
+  background-color: var(--color-background);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.processos-modal-list td a {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.processos-modal-list td a:hover {
+  text-decoration: underline;
+}
+
+.processos-modal-list tr:last-child td {
+  border-bottom: none;
+}
+
+.status-badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+  display: inline-block;
+}
+
+.status-badge.status-nao_concluido {
+  background-color: var(--color-status-nao_concluido-bg);
+}
+.status-badge.status-parcial {
+  background-color: var(--color-status-parcial-bg);
+  color: var(--color-status-parcial);
+}
+.status-badge.status-concluido {
+  background-color: var(--color-status-concluido-bg);
+}
+.status-badge.status-arquivado {
+  background-color: var(--color-status-arquivado-bg);
+}
+.status-badge.status-cancelado {
+  background-color: var(--color-status-cancelado-bg);
+}
+
+.no-results-modal {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-text-secondary);
+}

@@ -1,0 +1,51 @@
+.status-history-modal-content {
+    min-height: 300px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.status-history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.history-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-item-icon {
+    margin-right: 16px;
+    color: var(--color-primary);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.history-item-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.history-item-change {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--color-text-primary);
+}
+
+.history-item-change strong {
+    font-weight: 600;
+}
+
+.history-item-meta {
+    margin: 4px 0 0;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+}
