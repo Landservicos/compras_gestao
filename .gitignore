@@ -6,3 +6,4 @@ frontend/dist/
 .env
 .env.dev
 media/
+MANUAL_OPERACOES.md
