@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
-import { Link, useParams, useNavigate } from "react-router-dom"; // <--- Adicionado useNavigate
+import { Link, useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   ArrowLeft,
@@ -25,12 +25,13 @@ import "../styles/ProcessoDetail.css";
 import { useAuth } from "../hooks/useAuth";
 import ProcessoDetailSkeleton from "../components/ProcessoDetailSkeleton";
 import StatusHistoryModal from "../components/StatusHistoryModal";
+import FilePreviewModal from "../components/FilePreviewModal"; // Import do novo modal
 
 interface Arquivo {
   id: number;
   nome_atual: string;
   criado_por: string;
-  criado_por_role: string; // Adicionado para checagem de hierarquia
+  criado_por_role: string;
   arquivo_url: string;
   data_upload: string;
 }
@@ -88,6 +89,7 @@ const ROLE_HIERARCHY: Record<string, number> = {
   compras: 2,
   obra: 1,
 };
+
 interface StatusSelectorProps {
   status: string;
   updating: boolean;
@@ -126,23 +128,20 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const ProcessoDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate(); // <--- Hook para redirecionar
+  const navigate = useNavigate();
   const [processo, setProcesso] = useState<Processo | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<Arquivo | null>(null);
+  const [previewFile, setPreviewFile] = useState<Arquivo | null>(null); // Estado para o modal de preview
 
   // Modais
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-
-  // --- NOVO: Estados para Exclusão de Processo ---
-  const [isDeleteProcessModalOpen, setIsDeleteProcessModalOpen] =
-    useState(false);
+  const [isDeleteProcessModalOpen, setIsDeleteProcessModalOpen] = useState(false);
   const [, setIsDeletingProcess] = useState(false);
-  // -----------------------------------------------
 
   const [fileSearchTerm, setFileSearchTerm] = useState("");
   const { user } = useAuth();
@@ -276,21 +275,19 @@ const ProcessoDetail: React.FC = () => {
     }
   };
 
-  // --- NOVO: Função para Deletar o Processo Inteiro ---
   const handleDeleteProcess = async () => {
     if (!processo) return;
     setIsDeletingProcess(true);
     try {
       await api.delete(`/processos/${processo.id}/`);
       toast.success("Processo excluído com sucesso!");
-      navigate("/processos"); // Redireciona para a listagem
+      navigate("/processos");
     } catch (err: any) {
       toast.error(err.response?.data?.detail || "Erro ao excluir processo.");
       setIsDeletingProcess(false);
       setIsDeleteProcessModalOpen(false);
     }
   };
-  // ----------------------------------------------------
 
   if (loading) return <ProcessoDetailSkeleton />;
   if (!processo)
@@ -301,28 +298,29 @@ const ProcessoDetail: React.FC = () => {
 
   const canUpload =
     user?.is_superuser || (user?.permissions?.can_upload_file ?? false);
+  
+  // Checa permissão de download
+  const canDownload =
+    user?.is_superuser || 
+    user?.role === "dev" || 
+    (user?.permissions?.can_download_file ?? false);
 
-  // Função para verificar se pode deletar um arquivo específico
   const canDeleteFile = (file: Arquivo): boolean => {
     if (!user) return false;
-    if (user.role === "dev") return true; // Dev pode tudo
-    if (!user.permissions?.can_delete_file) return false; // Precisa da permissão base
+    if (user.role === "dev") return true;
+    if (!user.permissions?.can_delete_file) return false;
 
     const fileCreatorLevel = ROLE_HIERARCHY[file.criado_por_role] || 0;
-    return currentUserLevel >= fileCreatorLevel; // Só pode deletar se o nível for igual ou superior
+    return currentUserLevel >= fileCreatorLevel;
   };
 
-  // --- NOVO: Permissão para Deletar Processo ---
   const canDeleteProcess = (() => {
     if (!user) return false;
     if (user.role === "dev") return true;
-    // Precisa da permissão "can_delete_processo" E hierarquia igual ou maior que quem criou
     if (!user.permissions?.can_delete_processo) return false;
     return currentUserLevel >= processoCreatorLevel;
   })();
-  // ---------------------------------------------
 
-  // Permissão para alterar o status do processo
   const canChangeStatus = (() => {
     if (!user) return false;
     if (user.role === "dev") return true;
@@ -330,18 +328,15 @@ const ProcessoDetail: React.FC = () => {
     return currentUserLevel >= processoCreatorLevel;
   })();
 
-  // --- CORREÇÃO: Verificação da permissão de ver histórico ---
   const canViewHistory =
     user?.is_superuser ||
     user?.role === "dev" ||
-    // @ts-ignore - Ignora caso o typescript ainda não tenha reconhecido a propriedade
+    // @ts-ignore
     (user?.permissions?.view_status_history ?? false);
 
-  // Lógica para garantir que o status atual sempre apareça na lista
   const allowedStatuses = (() => {
     if (!user || !processo) return [];
 
-    // 1. Começa com a lista de status permitidos para o usuário
     let statuses = user.is_superuser
       ? STATUS_OPTIONS
       : STATUS_OPTIONS.filter(
@@ -351,12 +346,10 @@ const ProcessoDetail: React.FC = () => {
             ] ?? false
         );
 
-    // 2. Verifica se o status atual do processo já está na lista
     const currentStatusInList = statuses.some(
       (s) => s.value === processo.status
     );
 
-    // 3. Se não estiver, adiciona o status atual à lista para que ele seja exibido
     if (!currentStatusInList) {
       const currentStatusOption = STATUS_OPTIONS.find(
         (s) => s.value === processo.status
@@ -539,14 +532,13 @@ const ProcessoDetail: React.FC = () => {
                 <li key={arquivo.id} className="files__item">
                   <File size={20} className="files__icon" />
                   <div className="files__info">
-                    <a
-                      href={arquivo.arquivo_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="files__link"
+                    {/* Botão que abre o modal em vez de link direto */}
+                    <button
+                      onClick={() => setPreviewFile(arquivo)}
+                      className="files__link-btn"
                     >
                       {arquivo.nome_atual}
-                    </a>
+                    </button>
                     <div className="files__metadata">
                       <span className="files__meta-item">
                         <User size={12} />
@@ -616,6 +608,17 @@ const ProcessoDetail: React.FC = () => {
           do sistema e do disco.
         </p>
       </Modal>
+
+      {/* Modal de Preview */}
+      {previewFile && (
+        <FilePreviewModal
+          isOpen={!!previewFile}
+          onClose={() => setPreviewFile(null)}
+          fileUrl={previewFile.arquivo_url}
+          fileName={previewFile.nome_atual}
+          canDownload={canDownload}
+        />
+      )}
 
       {processo && (
         <StatusHistoryModal

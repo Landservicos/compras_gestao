@@ -48,6 +48,7 @@ class CustomUser(AbstractUser):
             ("can_delete_processo", "Pode excluir processos"),
             ("can_change_status", "Pode alterar o status de um processo"),
             ("can_upload_file", "Pode fazer upload de arquivos"),
+            ("can_download_file", "Pode fazer download de arquivos"),
             ("can_delete_file", "Pode excluir arquivos"),
             ("can_edit_user", "Pode editar outros usuários"),
         ]
@@ -79,6 +80,7 @@ class UserPermission(models.Model):
     can_delete_processo = models.BooleanField(default=False)
     can_change_status = models.BooleanField(default=False)
     can_upload_file = models.BooleanField(default=False)
+    can_download_file = models.BooleanField(default=False)
     can_delete_file = models.BooleanField(default=False)
     can_edit_user = models.BooleanField(default=False)
     can_delete_user = models.BooleanField(default=False) # Nova permissão
@@ -115,6 +117,7 @@ class UserPermission(models.Model):
             "can_delete_processo": False,
             "can_change_status": False,
             "can_upload_file": False,
+            "can_download_file": False,
             "can_delete_file": False,
             "can_edit_user": False,
             "can_delete_user": False,
@@ -173,6 +176,7 @@ class UserPermission(models.Model):
                 "can_delete_processo": permissions.can_delete_processo,
                 "can_change_status": permissions.can_change_status,
                 "can_upload_file": permissions.can_upload_file,
+                "can_download_file": permissions.can_download_file,
                 "can_delete_file": permissions.can_delete_file,
                 "can_edit_user": permissions.can_edit_user,
                 "can_delete_user": permissions.can_delete_user,

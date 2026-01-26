@@ -43,6 +43,7 @@ export interface User {
     can_delete_processo: boolean;
     can_change_status: boolean;
     can_upload_file: boolean;
+    can_download_file: boolean;
     can_delete_file: boolean;
     can_edit_user: boolean;
     can_delete_user: boolean;

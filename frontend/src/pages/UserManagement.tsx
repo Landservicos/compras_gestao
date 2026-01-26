@@ -68,6 +68,7 @@ export type PermissionSet = {
   can_delete_processo: boolean;
   can_change_status: boolean;
   can_upload_file: boolean;
+  can_download_file: boolean;
   can_delete_file: boolean;
   can_edit_user: boolean;
   can_delete_user: boolean;
@@ -158,6 +159,7 @@ const UserManagement: React.FC = () => {
     can_delete_processo: false,
     can_change_status: false,
     can_upload_file: false,
+    can_download_file: false,
     can_delete_file: false,
     can_edit_user: false,
     can_delete_user: false,
@@ -434,6 +436,7 @@ const UserManagement: React.FC = () => {
       can_delete_processo: isChecked,
       can_change_status: isChecked,
       can_upload_file: isChecked,
+      can_download_file: isChecked,
       can_delete_file: isChecked,
       can_edit_user: isChecked,
       can_delete_user: isChecked,
@@ -951,6 +954,19 @@ const UserManagement: React.FC = () => {
                     }
                   />{" "}
                   Upload
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={permissions.can_download_file || false}
+                    onChange={(e) =>
+                      handlePermissionChange(
+                        "can_download_file",
+                        e.target.checked
+                      )
+                    }
+                  />{" "}
+                  Download
                 </label>
                 <label>
                   <input

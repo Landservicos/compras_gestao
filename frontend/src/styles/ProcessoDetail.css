@@ -385,7 +385,23 @@
   margin-bottom: 0.25rem;
 }
 
-.files__link:hover {
+.files__link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 0.25rem;
+  width: 100%;
+}
+
+.files__link:hover,
+.files__link-btn:hover {
   text-decoration: underline;
   color: var(--color-primary);
 }
