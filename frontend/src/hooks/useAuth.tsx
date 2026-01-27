@@ -45,6 +45,12 @@ export interface User {
     can_upload_file: boolean;
     can_download_file: boolean;
     can_delete_file: boolean;
+    can_upload_processo: boolean;
+    can_upload_nota_fiscal: boolean;
+    can_upload_boletos: boolean;
+    can_download_processo: boolean;
+    can_download_nota_fiscal: boolean;
+    can_download_boletos: boolean;
     can_edit_user: boolean;
     can_delete_user: boolean;
     can_create_tenant: boolean;

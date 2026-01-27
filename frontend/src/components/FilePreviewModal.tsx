@@ -1,15 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "./Modal";
-import { Download, FileText, AlertCircle } from "lucide-react";
+import { Download, FileText, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
+import { Document, Page, pdfjs } from 'react-pdf';
 import "../styles/filePreviewModal.css";
-import { useAuth } from "../hooks/useAuth";
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
+
+// Configuração do Worker do PDF.js para Vite
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();
 
 interface FilePreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   fileUrl: string;
   fileName: string;
-  documentType: string;
   canDownload: boolean;
 }
 
@@ -18,9 +25,12 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
   onClose,
   fileUrl,
   fileName,
-  documentType,
   canDownload,
 }) => {
+  const [numPages, setNumPages] = useState<number>(0);
+  const [pageNumber, setPageNumber] = useState<number>(1);
+  const [scale, setScale] = useState<number>(1.0);
+
   const getFileType = (url: string) => {
     const extension = url.split(".").pop()?.toLowerCase();
     if (["jpg", "jpeg", "png", "gif", "webp", "bmp"].includes(extension || "")) {
@@ -34,6 +44,19 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
 
   const fileType = getFileType(fileUrl);
 
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
+    setNumPages(numPages);
+    setPageNumber(1);
+  }
+
+  const changePage = (offset: number) => {
+    setPageNumber((prevPageNumber) => Math.min(Math.max(1, prevPageNumber + offset), numPages));
+  };
+
+  const handleZoom = (delta: number) => {
+    setScale((prevScale) => Math.max(0.5, Math.min(3.0, prevScale + delta)));
+  };
+
   const renderContent = () => {
     switch (fileType) {
       case "image":
@@ -46,14 +69,56 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
           />
         );
       case "pdf":
-        // Tenta esconder a barra de ferramentas (download/print) se o usuário não tiver permissão
-        const pdfUrl = canDownload ? fileUrl : `${fileUrl}#toolbar=0&navpanes=0&scrollbar=0`;
         return (
-          <iframe
-            src={pdfUrl}
-            title={fileName}
-            className="file-preview-iframe"
-          />
+          <div className="pdf-wrapper">
+            <div className="pdf-controls">
+                <button 
+                    disabled={pageNumber <= 1} 
+                    onClick={() => changePage(-1)}
+                    className="pdf-control-btn"
+                    title="Página Anterior"
+                >
+                    <ChevronLeft size={20} />
+                </button>
+                <span className="pdf-page-info">
+                    Página {pageNumber} de {numPages || '--'}
+                </span>
+                <button 
+                    disabled={pageNumber >= numPages} 
+                    onClick={() => changePage(1)}
+                    className="pdf-control-btn"
+                    title="Próxima Página"
+                >
+                    <ChevronRight size={20} />
+                </button>
+                <div className="pdf-zoom-controls">
+                    <button onClick={() => handleZoom(-0.1)} className="pdf-control-btn" title="Diminuir Zoom">
+                        <ZoomOut size={18} />
+                    </button>
+                    <span className="pdf-zoom-info">{Math.round(scale * 100)}%</span>
+                    <button onClick={() => handleZoom(0.1)} className="pdf-control-btn" title="Aumentar Zoom">
+                        <ZoomIn size={18} />
+                    </button>
+                </div>
+            </div>
+            
+            <div className="pdf-document-container">
+                <Document
+                    file={fileUrl}
+                    onLoadSuccess={onDocumentLoadSuccess}
+                    loading={<div className="pdf-loading">Carregando PDF...</div>}
+                    error={<div className="pdf-error">Erro ao carregar o arquivo PDF.</div>}
+                    className="pdf-document"
+                >
+                    <Page 
+                        pageNumber={pageNumber} 
+                        scale={scale} 
+                        renderTextLayer={false} 
+                        renderAnnotationLayer={false}
+                    />
+                </Document>
+            </div>
+          </div>
         );
       default:
         return (
@@ -64,6 +129,15 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
           </div>
         );
     }
+  };
+
+  const handleDownload = () => {
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -81,6 +155,12 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
             <button className="btn btn-secondary" onClick={onClose}>
                 Fechar
             </button>
+            {canDownload && (
+              <button className="btn btn-primary" onClick={handleDownload} title="Baixar Arquivo">
+                <Download size={16} style={{ marginRight: "8px" }} />
+                Baixar
+              </button>
+            )}
         </div>
       </div>
     </Modal>

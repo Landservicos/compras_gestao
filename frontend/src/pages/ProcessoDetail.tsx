@@ -674,7 +674,6 @@ const ProcessoDetail: React.FC = () => {
           onClose={() => setPreviewFile(null)}
           fileUrl={previewFile.arquivo_url}
           fileName={previewFile.nome_atual}
-          documentType={previewFile.document_type}
           canDownload={getCanDownloadFile(previewFile.document_type)}
         />
       )}
