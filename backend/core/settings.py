@@ -35,20 +35,21 @@ else:
 # Remove duplicatas para limpeza.
 ALLOWED_HOSTS = list(set(ALLOWED_HOSTS))
 
-# --- CORREÇÃO PARA O ERRO 403 (CSRF) ---
-CSRF_TRUSTED_ORIGINS_ENV = os.environ.get("CSRF_TRUSTED_ORIGINS")
-if CSRF_TRUSTED_ORIGINS_ENV:
-    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in CSRF_TRUSTED_ORIGINS_ENV.split(",")]
-else:
-    CSRF_TRUSTED_ORIGINS = []
-
-# Adiciona localhost para desenvolvimento, se necessário
-if DEBUG and not CSRF_TRUSTED_ORIGINS:
-     CSRF_TRUSTED_ORIGINS = ['http://localhost:5174', 'http://127.0.0.1:5174']
-
+# Configurações de Segurança e HTTPS
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
 USE_X_FORWARDED_PORT = True
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # HSTS (Optional but recommended)
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+# --- CORREÇÃO PARA O ERRO 403 (CSRF) ---
 
 
 
