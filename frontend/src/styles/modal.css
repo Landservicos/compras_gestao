@@ -159,7 +159,7 @@
   gap: 1.25rem;
   color: var(--color-text-secondary);
   flex: 1; /* Permite que o corpo cresça/encolha com o resize */
-  overflow: hidden; /* Conteúdo interno deve gerenciar seu scroll */
+  overflow: auto; /* Conteúdo interno deve gerenciar seu scroll */
 }
 
 /* ============================= */
