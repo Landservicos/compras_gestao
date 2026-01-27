@@ -12,6 +12,7 @@ interface ModalProps {
   footer?: React.ReactNode;
   closeOnOverlay?: boolean;
   size?: "small" | "medium" | "large";
+  resizable?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -24,6 +25,7 @@ const Modal: React.FC<ModalProps> = ({
   footer,
   closeOnOverlay = true,
   size = "medium",
+  resizable = false,
 }) => {
   const [closing, setClosing] = useState(false);
 
@@ -45,7 +47,7 @@ const Modal: React.FC<ModalProps> = ({
       <div
         className={`modal-content modal-animate modal-${size} ${
           closing ? "closing-content" : ""
-        }`}
+        } ${resizable ? "modal-resizable" : ""}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-header">

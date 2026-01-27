@@ -143,11 +143,36 @@ class ProcessoViewSet(viewsets.ModelViewSet):
             status_novo=processo.status,
         )
         
-    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated, HasPermission('can_upload_file')])
+    @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def upload(self, request, pk=None):
         processo = self.get_object()
         f = request.FILES.get("file")
         nome = request.data.get("nome") or (f.name if f else "")
+        document_type = request.data.get("document_type")
+        allowed_document_types = ["processo", "nota_fiscal", "boletos"]
+
+        if document_type not in allowed_document_types:
+            return Response({"detail": "Tipo de documento inválido."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        _user = request._user
+        if not (_user.is_superuser or _user.role == 'dev'):
+            permissions_dict = UserPermission.get_user_permissions_dict(_user, request.tenant)
+            
+            # Mapeamento do tipo de documento para a permissão específica
+            permission_map = {
+                "processo": "can_upload_processo",
+                "nota_fiscal": "can_upload_nota_fiscal",
+                "boletos": "can_upload_boletos"
+            }
+            required_perm = permission_map.get(document_type)
+            
+            # Verifica se tem a permissão específica OU a geral (caso queira manter retrocompatibilidade)
+            has_specific = permissions_dict.get(required_perm, False)
+            has_general = permissions_dict.get('can_upload_file', False)
+            
+            if not has_specific and not has_general:
+                raise PermissionDenied(f"Você não tem permissão para fazer upload de {document_type.replace('_', ' ')}.")
+
         if not f:
             return Response({"detail": "Nenhum arquivo enviado."}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -155,6 +180,7 @@ class ProcessoViewSet(viewsets.ModelViewSet):
             processo=processo,
             nome_original=f.name,
             nome_atual=nome,
+            document_type=document_type,
             arquivo=f,
             criado_por=request.user,
         )

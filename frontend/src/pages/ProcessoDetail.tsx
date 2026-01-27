@@ -34,6 +34,7 @@ interface Arquivo {
   criado_por_role: string;
   arquivo_url: string;
   data_upload: string;
+  document_type: string;
 }
 
 interface Processo {
@@ -77,6 +78,12 @@ const STATUS_OPTIONS = [
   { value: "concluido", label: "Concluído" },
   { value: "arquivado", label: "Arquivado" },
   { value: "cancelado", label: "Cancelado" },
+];
+
+const DOCUMENT_TYPE_OPTIONS = [
+  { value: "processo", label: "Processo" },
+  { value: "nota_fiscal", label: "Nota Fiscal" },
+  { value: "boletos", label: "Boletos" },
 ];
 
 // Hierarquia de cargos para validação no frontend
@@ -136,6 +143,7 @@ const ProcessoDetail: React.FC = () => {
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<Arquivo | null>(null);
   const [previewFile, setPreviewFile] = useState<Arquivo | null>(null); // Estado para o modal de preview
+  const [documentType, setDocumentType] = useState<string>("processo"); // Novo estado para o tipo de documento
 
   // Modais
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -145,6 +153,28 @@ const ProcessoDetail: React.FC = () => {
 
   const [fileSearchTerm, setFileSearchTerm] = useState("");
   const { user } = useAuth();
+
+  // Granular Upload Permissions
+  const canUploadProcesso = user?.is_superuser || (user?.permissions?.can_upload_processo ?? false);
+  const canUploadNotaFiscal = user?.is_superuser || (user?.permissions?.can_upload_nota_fiscal ?? false);
+  const canUploadBoletos = user?.is_superuser || (user?.permissions?.can_upload_boletos ?? false);
+
+  const availableDocumentTypes = DOCUMENT_TYPE_OPTIONS.filter((option) => {
+    if (option.value === "processo") return canUploadProcesso;
+    if (option.value === "nota_fiscal") return canUploadNotaFiscal;
+    if (option.value === "boletos") return canUploadBoletos;
+    return false;
+  });
+
+  // Automatically select the first available option if the current one isn't available
+  useEffect(() => {
+    if (availableDocumentTypes.length > 0) {
+       const isCurrentTypeAvailable = availableDocumentTypes.some(opt => opt.value === documentType);
+       if (!isCurrentTypeAvailable) {
+           setDocumentType(availableDocumentTypes[0].value);
+       }
+    }
+  }, [availableDocumentTypes, documentType]);
 
   const notifyUpdate = () => {
     new BroadcastChannel("processo-update").postMessage("update");
@@ -196,6 +226,7 @@ const ProcessoDetail: React.FC = () => {
 
     const formData = new FormData();
     formData.append("file", selectedFile);
+    formData.append("document_type", documentType);
 
     try {
       const res = await api.post<Arquivo>(`/processos/${id}/upload/`, formData);
@@ -297,13 +328,20 @@ const ProcessoDetail: React.FC = () => {
   const processoCreatorLevel = ROLE_HIERARCHY[processo.criado_por_role] || 0;
 
   const canUpload =
-    user?.is_superuser || (user?.permissions?.can_upload_file ?? false);
+    (user?.is_superuser || (user?.permissions?.can_upload_file ?? false)) && availableDocumentTypes.length > 0;
   
-  // Checa permissão de download
-  const canDownload =
-    user?.is_superuser || 
-    user?.role === "dev" || 
-    (user?.permissions?.can_download_file ?? false);
+  // Helper for download permissions
+  const getCanDownloadFile = (docType: string) => {
+      if (user?.is_superuser || user?.role === "dev") return true;
+      // Fallback to generic if specific not set (optional, but sticking to granular as requested)
+      // Actually, let's check granular first.
+      if (docType === "processo") return user?.permissions?.can_download_processo ?? false;
+      if (docType === "nota_fiscal") return user?.permissions?.can_download_nota_fiscal ?? false;
+      if (docType === "boletos") return user?.permissions?.can_download_boletos ?? false;
+      
+      // Fallback to generic permission if the doc type is unknown or unset
+      return user?.permissions?.can_download_file ?? false;
+  };
 
   const canDeleteFile = (file: Arquivo): boolean => {
     if (!user) return false;
@@ -479,6 +517,22 @@ const ProcessoDetail: React.FC = () => {
                 </h4>
 
                 <form onSubmit={handleUpload} className="upload-form">
+                  <div className="form-group" style={{ marginBottom: "1rem" }}>
+                    <label htmlFor="document-type">Tipo de Documento</label>
+                    <select
+                      id="document-type"
+                      className="form-input"
+                      value={documentType}
+                      onChange={(e) => setDocumentType(e.target.value)}
+                      disabled={uploading}
+                    >
+                      {availableDocumentTypes.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   <label htmlFor="file-upload" className="upload-form__label">
                     <Upload size={18} />
                     <span>
@@ -543,6 +597,10 @@ const ProcessoDetail: React.FC = () => {
                       <span className="files__meta-item">
                         <User size={12} />
                         {arquivo.criado_por}
+                      </span>
+                      <span className="files__meta-item">
+                        <FileText size={12} />
+                         {DOCUMENT_TYPE_OPTIONS.find(opt => opt.value === arquivo.document_type)?.label || "Documento"}
                       </span>
                       <span className="files__meta-item">
                         <Calendar size={12} />
@@ -616,7 +674,8 @@ const ProcessoDetail: React.FC = () => {
           onClose={() => setPreviewFile(null)}
           fileUrl={previewFile.arquivo_url}
           fileName={previewFile.nome_atual}
-          canDownload={canDownload}
+          documentType={previewFile.document_type}
+          canDownload={getCanDownloadFile(previewFile.document_type)}
         />
       )}
 

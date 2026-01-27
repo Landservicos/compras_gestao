@@ -2,12 +2,14 @@ import React from "react";
 import Modal from "./Modal";
 import { Download, FileText, AlertCircle } from "lucide-react";
 import "../styles/filePreviewModal.css";
+import { useAuth } from "../hooks/useAuth";
 
 interface FilePreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   fileUrl: string;
   fileName: string;
+  documentType: string;
   canDownload: boolean;
 }
 
@@ -16,6 +18,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
   onClose,
   fileUrl,
   fileName,
+  documentType,
   canDownload,
 }) => {
   const getFileType = (url: string) => {
@@ -39,12 +42,15 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
             src={fileUrl}
             alt={fileName}
             className="file-preview-image"
+            onContextMenu={(e) => !canDownload && e.preventDefault()}
           />
         );
       case "pdf":
+        // Tenta esconder a barra de ferramentas (download/print) se o usuário não tiver permissão
+        const pdfUrl = canDownload ? fileUrl : `${fileUrl}#toolbar=0&navpanes=0&scrollbar=0`;
         return (
           <iframe
-            src={fileUrl}
+            src={pdfUrl}
             title={fileName}
             className="file-preview-iframe"
           />
@@ -54,11 +60,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
           <div className="file-preview-error">
             <FileText size={64} className="file-preview-icon" />
             <p>Visualização não disponível para este tipo de arquivo.</p>
-            {canDownload ? (
-              <p>Por favor, faça o download para visualizar.</p>
-            ) : (
-              <p>Você não tem permissão para baixar este arquivo.</p>
-            )}
+            {!canDownload && <p>Você não tem permissão para baixar este arquivo.</p>}
           </div>
         );
     }
@@ -70,6 +72,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
       onClose={onClose}
       title={fileName}
       showFooter={false}
+      resizable={true}
     >
       <div className="file-preview-modal-content">
         <div className="file-preview-modal-body">{renderContent()}</div>
@@ -78,26 +81,6 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
             <button className="btn btn-secondary" onClick={onClose}>
                 Fechar
             </button>
-            
-            {canDownload ? (
-            <a
-                href={fileUrl}
-                download
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-download"
-            >
-                <Download size={18} />
-                Baixar Arquivo
-            </a>
-            ) : (
-             <div title="Você não tem permissão para baixar arquivos.">
-                 <button className="btn btn-secondary" disabled style={{ opacity: 0.5, cursor: 'not-allowed' }}>
-                    <Download size={18} style={{ marginRight: '0.5rem' }}/>
-                    Download Bloqueado
-                 </button>
-             </div>
-            )}
         </div>
       </div>
     </Modal>

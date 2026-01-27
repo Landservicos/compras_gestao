@@ -1,9 +1,10 @@
 .file-preview-modal-content {
   display: flex;
   flex-direction: column;
-  height: 80vh; /* Ocupa 80% da altura da tela */
-  width: 80vw;
-  max-width: 1200px;
+  height: 100%;
+  width: 100%;
+  /* Removemos dimensões fixas pois agora o modal é redimensionável */
+  min-height: 0; 
 }
 
 .file-preview-modal-body {
@@ -16,6 +17,8 @@
   overflow: hidden;
   position: relative;
   padding: 1rem;
+  height: 100%;
+  min-height: 0; /* Importante para flexbox nested scrolling */
 }
 
 .file-preview-image {

@@ -21,6 +21,7 @@ class ArquivoSerializer(serializers.ModelSerializer):
             "processo",
             "nome_original",
             "nome_atual",
+            "document_type",
             "arquivo",
             "arquivo_url",
             "data_upload",

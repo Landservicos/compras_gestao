@@ -82,6 +82,17 @@ class UserPermission(models.Model):
     can_upload_file = models.BooleanField(default=False)
     can_download_file = models.BooleanField(default=False)
     can_delete_file = models.BooleanField(default=False)
+    
+    # Granular Upload Permissions
+    can_upload_processo = models.BooleanField(default=False)
+    can_upload_nota_fiscal = models.BooleanField(default=False)
+    can_upload_boletos = models.BooleanField(default=False)
+    
+    # Granular Download Permissions
+    can_download_processo = models.BooleanField(default=False)
+    can_download_nota_fiscal = models.BooleanField(default=False)
+    can_download_boletos = models.BooleanField(default=False)
+
     can_edit_user = models.BooleanField(default=False)
     can_delete_user = models.BooleanField(default=False) # Nova permissão
     view_status_history = models.BooleanField(default=False)
@@ -119,6 +130,12 @@ class UserPermission(models.Model):
             "can_upload_file": False,
             "can_download_file": False,
             "can_delete_file": False,
+            "can_upload_processo": False,
+            "can_upload_nota_fiscal": False,
+            "can_upload_boletos": False,
+            "can_download_processo": False,
+            "can_download_nota_fiscal": False,
+            "can_download_boletos": False,
             "can_edit_user": False,
             "can_delete_user": False,
             "view_status_history": False,
@@ -178,6 +195,12 @@ class UserPermission(models.Model):
                 "can_upload_file": permissions.can_upload_file,
                 "can_download_file": permissions.can_download_file,
                 "can_delete_file": permissions.can_delete_file,
+                "can_upload_processo": permissions.can_upload_processo,
+                "can_upload_nota_fiscal": permissions.can_upload_nota_fiscal,
+                "can_upload_boletos": permissions.can_upload_boletos,
+                "can_download_processo": permissions.can_download_processo,
+                "can_download_nota_fiscal": permissions.can_download_nota_fiscal,
+                "can_download_boletos": permissions.can_download_boletos,
                 "can_edit_user": permissions.can_edit_user,
                 "can_delete_user": permissions.can_delete_user,
                 "view_status_history": permissions.view_status_history,
