@@ -38,7 +38,7 @@ class CRDIIViewSet(viewsets.ModelViewSet):
     pagination_class = None
 
     def get_queryset(self):
-        _user = self.request._user
+        _user = self.request.user
         tenant = self.request.tenant
 
         if _user.is_superuser or _user.role in ["dev"]:
@@ -88,7 +88,7 @@ class ProcessoViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated()]
 
     def get_queryset(self):
-        _user = self.request._user
+        _user = self.request.user
         tenant = self.request.tenant
 
         if _user.is_superuser or _user.role in ["dev"]:
@@ -102,7 +102,7 @@ class ProcessoViewSet(viewsets.ModelViewSet):
         ).order_by("-data_criacao")
 
     def update(self, request, *args, **kwargs):
-        _user = request._user
+        _user = request.user
         processo = self.get_object()
         old_status = processo.status
         new_status = request.data.get("status")
@@ -145,51 +145,55 @@ class ProcessoViewSet(viewsets.ModelViewSet):
         
     @action(detail=True, methods=["post"], permission_classes=[IsAuthenticated])
     def upload(self, request, pk=None):
-        processo = self.get_object()
-        f = request.FILES.get("file")
-        nome = request.data.get("nome") or (f.name if f else "")
-        document_type = request.data.get("document_type")
-        allowed_document_types = ["processo", "nota_fiscal", "boletos"]
+        try:
+            processo = self.get_object()
+            f = request.FILES.get("file")
+            nome = request.data.get("nome") or (f.name if f else "")
+            document_type = request.data.get("document_type")
+            allowed_document_types = ["processo", "nota_fiscal", "boletos"]
 
-        if document_type not in allowed_document_types:
-            return Response({"detail": "Tipo de documento inválido."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        _user = request._user
-        if not (_user.is_superuser or _user.role == 'dev'):
-            permissions_dict = UserPermission.get_user_permissions_dict(_user, request.tenant)
+            if document_type not in allowed_document_types:
+                return Response({"detail": "Tipo de documento inválido."}, status=status.HTTP_400_BAD_REQUEST)
             
-            # Mapeamento do tipo de documento para a permissão específica
-            permission_map = {
-                "processo": "can_upload_processo",
-                "nota_fiscal": "can_upload_nota_fiscal",
-                "boletos": "can_upload_boletos"
-            }
-            required_perm = permission_map.get(document_type)
-            
-            # Verifica se tem a permissão específica OU a geral (caso queira manter retrocompatibilidade)
-            has_specific = permissions_dict.get(required_perm, False)
-            has_general = permissions_dict.get('can_upload_file', False)
-            
-            if not has_specific and not has_general:
-                raise PermissionDenied(f"Você não tem permissão para fazer upload de {document_type.replace('_', ' ')}.")
+            _user = request.user
+            if not (_user.is_superuser or _user.role == 'dev'):
+                permissions_dict = UserPermission.get_user_permissions_dict(_user, request.tenant)
+                
+                # Mapeamento do tipo de documento para a permissão específica
+                permission_map = {
+                    "processo": "can_upload_processo",
+                    "nota_fiscal": "can_upload_nota_fiscal",
+                    "boletos": "can_upload_boletos"
+                }
+                required_perm = permission_map.get(document_type)
+                
+                # Verifica se tem a permissão específica OU a geral (caso queira manter retrocompatibilidade)
+                has_specific = permissions_dict.get(required_perm, False)
+                has_general = permissions_dict.get('can_upload_file', False)
+                
+                if not has_specific and not has_general:
+                    raise PermissionDenied(f"Você não tem permissão para fazer upload de {document_type.replace('_', ' ')}.")
 
-        if not f:
-            return Response({"detail": "Nenhum arquivo enviado."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        arquivo = Arquivo.objects.create(
-            processo=processo,
-            nome_original=f.name,
-            nome_atual=nome,
-            document_type=document_type,
-            arquivo=f,
-            criado_por=request.user,
-        )
-        LogUso.objects.create(
-            usuario=request.user,
-            acao="upload",
-            detalhe=f"Upload arquivo {arquivo.nome_atual} no processo {processo.id}",
-        )
-        return Response(ArquivoSerializer(arquivo, context={"request": request}).data, status=status.HTTP_201_CREATED)
+            if not f:
+                return Response({"detail": "Nenhum arquivo enviado."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            arquivo = Arquivo.objects.create(
+                processo=processo,
+                nome_original=f.name,
+                nome_atual=nome,
+                document_type=document_type,
+                arquivo=f,
+                criado_por=request.user,
+            )
+            LogUso.objects.create(
+                usuario=request.user,
+                acao="upload",
+                detalhe=f"Upload arquivo {arquivo.nome_atual} no processo {processo.id}",
+            )
+            return Response(ArquivoSerializer(arquivo, context={"request": request}).data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            traceback.print_exc()
+            return Response({"detail": f"Erro interno no upload: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated, CanViewStatusHistory])
     def history(self, request, pk=None):
