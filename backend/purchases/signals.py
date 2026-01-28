@@ -1,8 +1,9 @@
-from django.db.models.signals import pre_save, post_save
+from django.db.models.signals import pre_save, post_save, post_delete
 from django.dispatch import receiver
 from django.utils.text import slugify
 from django.utils import timezone
-from .models import Processo, CRDII, StatusHistory
+from .models import Processo, CRDII, StatusHistory, Arquivo
+import os
 
 @receiver(pre_save, sender=CRDII)
 def pre_save_crdii(sender, instance, **kwargs):
@@ -70,3 +71,33 @@ def pre_save_processo(sender, instance, **kwargs):
     # Garante que, na criação, a data de "em andamento" seja setada se não houver outra
     if is_new and not instance.data_em_andamento:
         instance.data_em_andamento = instance.data_criacao or timezone.now()
+
+
+@receiver(post_delete, sender=Arquivo)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """
+    Deleta o arquivo físico quando o registro no banco é excluído.
+    Também remove diretórios vazios recursivamente.
+    """
+    if instance.arquivo:
+        try:
+            if os.path.isfile(instance.arquivo.path):
+                os.remove(instance.arquivo.path)
+                
+                # Tentar remover diretórios vazios
+                directory = os.path.dirname(instance.arquivo.path)
+                
+                # Vamos tentar subir até 3 níveis (Processo -> CRDII -> Tenant)
+                # Ou parar quando encontrar um diretório não vazio
+                for _ in range(3): 
+                    try:
+                        # os.rmdir só remove se estiver vazio
+                        os.rmdir(directory)
+                        # Se funcionou, sobe um nível para tentar remover o pai
+                        directory = os.path.dirname(directory)
+                    except OSError:
+                        # Diretório não está vazio ou outro erro, para a recursão
+                        break
+        except Exception as e:
+            # Log de erro silencioso para não quebrar a transação do banco
+            print(f"Erro ao deletar arquivo físico: {e}")
