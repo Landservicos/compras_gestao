@@ -50,6 +50,18 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
 
 # --- CORREÇÃO PARA O ERRO 403 (CSRF) ---
+CSRF_TRUSTED_ORIGINS = []
+csrf_trusted_origins_env = os.environ.get("CSRF_TRUSTED_ORIGINS")
+
+if csrf_trusted_origins_env:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_trusted_origins_env.split(",")]
+elif not DEBUG:
+    # Se não definido em produção, avisa ou define um padrão (opcional)
+    # Mas idealmente deve vir do .env
+    pass
+
+if DEBUG:
+     CSRF_TRUSTED_ORIGINS += ["http://localhost:5174", "http://127.0.0.1:5174"]
 
 
 

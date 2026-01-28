@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Configuration
-domains=("landgestao.vps-kinghost.net")
+domains=("gestaoland.com")
 rsa_key_size=4096
 data_path="./certbot"
-email="admin@landgestao.vps-kinghost.net" # Change this to your email
+email="admin@gestaoland.com" # Change this to your email
 staging=0 # Set to 1 for testing
 
 echo "### Starting nginx with init config ..."
