@@ -50,6 +50,7 @@
   justify-content: flex-end;
   padding-top: 1rem;
   gap: 1rem;
+  padding-right: 45px; /* Espaço para o handle de resize */
 }
 
 .btn-download {

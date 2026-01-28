@@ -147,6 +147,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
       title={fileName}
       showFooter={false}
       resizable={true}
+      closeOnOverlay={false}
     >
       <div className="file-preview-modal-content">
         <div className="file-preview-modal-body">{renderContent()}</div>
