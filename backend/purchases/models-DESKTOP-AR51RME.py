@@ -96,17 +96,6 @@ class Arquivo(models.Model):
     )
     nome_original = models.CharField(max_length=255)
     nome_atual = models.CharField(max_length=255)
-    document_type = models.CharField(
-        max_length=50,
-        choices=(
-            ("processo", "Processo"),
-            ("nota_fiscal", "Notas"),
-            ("boletos", "Forma de pagamento"),
-        ),
-        default="processo",
-        blank=True,
-        null=True,
-    )
     arquivo = models.FileField(upload_to=get_upload_path)
     data_upload = models.DateTimeField(auto_now_add=True)
 

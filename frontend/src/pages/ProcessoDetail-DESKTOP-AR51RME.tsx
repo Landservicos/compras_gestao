@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom"; // <--- Adicionado useNavigate
 import toast from "react-hot-toast";
 import {
   ArrowLeft,
@@ -25,16 +25,14 @@ import "../styles/ProcessoDetail.css";
 import { useAuth } from "../hooks/useAuth";
 import ProcessoDetailSkeleton from "../components/ProcessoDetailSkeleton";
 import StatusHistoryModal from "../components/StatusHistoryModal";
-import FilePreviewModal from "../components/FilePreviewModal"; // Import do novo modal
 
 interface Arquivo {
   id: number;
   nome_atual: string;
   criado_por: string;
-  criado_por_role: string;
+  criado_por_role: string; // Adicionado para checagem de hierarquia
   arquivo_url: string;
   data_upload: string;
-  document_type: string;
 }
 
 interface Processo {
@@ -80,12 +78,6 @@ const STATUS_OPTIONS = [
   { value: "cancelado", label: "Cancelado" },
 ];
 
-const DOCUMENT_TYPE_OPTIONS = [
-  { value: "processo", label: "Processo" },
-  { value: "nota_fiscal", label: "Notas" },
-  { value: "boletos", label: "Forma de pagamento" },
-];
-
 // Hierarquia de cargos para validação no frontend
 const ROLE_HIERARCHY: Record<string, number> = {
   dev: 6,
@@ -96,7 +88,6 @@ const ROLE_HIERARCHY: Record<string, number> = {
   compras: 2,
   obra: 1,
 };
-
 interface StatusSelectorProps {
   status: string;
   updating: boolean;
@@ -135,46 +126,26 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const ProcessoDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // <--- Hook para redirecionar
   const [processo, setProcesso] = useState<Processo | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<Arquivo | null>(null);
-  const [previewFile, setPreviewFile] = useState<Arquivo | null>(null); // Estado para o modal de preview
-  const [documentType, setDocumentType] = useState<string>("processo"); // Novo estado para o tipo de documento
 
   // Modais
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-  const [isDeleteProcessModalOpen, setIsDeleteProcessModalOpen] = useState(false);
+
+  // --- NOVO: Estados para Exclusão de Processo ---
+  const [isDeleteProcessModalOpen, setIsDeleteProcessModalOpen] =
+    useState(false);
   const [, setIsDeletingProcess] = useState(false);
+  // -----------------------------------------------
 
   const [fileSearchTerm, setFileSearchTerm] = useState("");
   const { user } = useAuth();
-
-  // Granular Upload Permissions
-  const canUploadProcesso = user?.is_superuser || (user?.permissions?.can_upload_processo ?? false);
-  const canUploadNotaFiscal = user?.is_superuser || (user?.permissions?.can_upload_nota_fiscal ?? false);
-  const canUploadBoletos = user?.is_superuser || (user?.permissions?.can_upload_boletos ?? false);
-
-  const availableDocumentTypes = DOCUMENT_TYPE_OPTIONS.filter((option) => {
-    if (option.value === "processo") return canUploadProcesso;
-    if (option.value === "nota_fiscal") return canUploadNotaFiscal;
-    if (option.value === "boletos") return canUploadBoletos;
-    return false;
-  });
-
-  // Automatically select the first available option if the current one isn't available
-  useEffect(() => {
-    if (availableDocumentTypes.length > 0) {
-       const isCurrentTypeAvailable = availableDocumentTypes.some(opt => opt.value === documentType);
-       if (!isCurrentTypeAvailable) {
-           setDocumentType(availableDocumentTypes[0].value);
-       }
-    }
-  }, [availableDocumentTypes, documentType]);
 
   const notifyUpdate = () => {
     new BroadcastChannel("processo-update").postMessage("update");
@@ -226,7 +197,6 @@ const ProcessoDetail: React.FC = () => {
 
     const formData = new FormData();
     formData.append("file", selectedFile);
-    formData.append("document_type", documentType);
 
     try {
       const res = await api.post<Arquivo>(`/processos/${id}/upload/`, formData);
@@ -306,19 +276,21 @@ const ProcessoDetail: React.FC = () => {
     }
   };
 
+  // --- NOVO: Função para Deletar o Processo Inteiro ---
   const handleDeleteProcess = async () => {
     if (!processo) return;
     setIsDeletingProcess(true);
     try {
       await api.delete(`/processos/${processo.id}/`);
       toast.success("Processo excluído com sucesso!");
-      navigate("/processos");
+      navigate("/processos"); // Redireciona para a listagem
     } catch (err: any) {
       toast.error(err.response?.data?.detail || "Erro ao excluir processo.");
       setIsDeletingProcess(false);
       setIsDeleteProcessModalOpen(false);
     }
   };
+  // ----------------------------------------------------
 
   if (loading) return <ProcessoDetailSkeleton />;
   if (!processo)
@@ -328,37 +300,29 @@ const ProcessoDetail: React.FC = () => {
   const processoCreatorLevel = ROLE_HIERARCHY[processo.criado_por_role] || 0;
 
   const canUpload =
-    (user?.is_superuser || (user?.permissions?.can_upload_file ?? false)) && availableDocumentTypes.length > 0;
-  
-  // Helper for download permissions
-  const getCanDownloadFile = (docType: string) => {
-      if (user?.is_superuser || user?.role === "dev") return true;
-      // Fallback to generic if specific not set (optional, but sticking to granular as requested)
-      // Actually, let's check granular first.
-      if (docType === "processo") return user?.permissions?.can_download_processo ?? false;
-      if (docType === "nota_fiscal") return user?.permissions?.can_download_nota_fiscal ?? false;
-      if (docType === "boletos") return user?.permissions?.can_download_boletos ?? false;
-      
-      // Fallback to generic permission if the doc type is unknown or unset
-      return user?.permissions?.can_download_file ?? false;
-  };
+    user?.is_superuser || (user?.permissions?.can_upload_file ?? false);
 
+  // Função para verificar se pode deletar um arquivo específico
   const canDeleteFile = (file: Arquivo): boolean => {
     if (!user) return false;
-    if (user.role === "dev") return true;
-    if (!user.permissions?.can_delete_file) return false;
+    if (user.role === "dev") return true; // Dev pode tudo
+    if (!user.permissions?.can_delete_file) return false; // Precisa da permissão base
 
     const fileCreatorLevel = ROLE_HIERARCHY[file.criado_por_role] || 0;
-    return currentUserLevel >= fileCreatorLevel;
+    return currentUserLevel >= fileCreatorLevel; // Só pode deletar se o nível for igual ou superior
   };
 
+  // --- NOVO: Permissão para Deletar Processo ---
   const canDeleteProcess = (() => {
     if (!user) return false;
     if (user.role === "dev") return true;
+    // Precisa da permissão "can_delete_processo" E hierarquia igual ou maior que quem criou
     if (!user.permissions?.can_delete_processo) return false;
     return currentUserLevel >= processoCreatorLevel;
   })();
+  // ---------------------------------------------
 
+  // Permissão para alterar o status do processo
   const canChangeStatus = (() => {
     if (!user) return false;
     if (user.role === "dev") return true;
@@ -366,15 +330,18 @@ const ProcessoDetail: React.FC = () => {
     return currentUserLevel >= processoCreatorLevel;
   })();
 
+  // --- CORREÇÃO: Verificação da permissão de ver histórico ---
   const canViewHistory =
     user?.is_superuser ||
     user?.role === "dev" ||
-    // @ts-ignore
+    // @ts-ignore - Ignora caso o typescript ainda não tenha reconhecido a propriedade
     (user?.permissions?.view_status_history ?? false);
 
+  // Lógica para garantir que o status atual sempre apareça na lista
   const allowedStatuses = (() => {
     if (!user || !processo) return [];
 
+    // 1. Começa com a lista de status permitidos para o usuário
     let statuses = user.is_superuser
       ? STATUS_OPTIONS
       : STATUS_OPTIONS.filter(
@@ -384,10 +351,12 @@ const ProcessoDetail: React.FC = () => {
             ] ?? false
         );
 
+    // 2. Verifica se o status atual do processo já está na lista
     const currentStatusInList = statuses.some(
       (s) => s.value === processo.status
     );
 
+    // 3. Se não estiver, adiciona o status atual à lista para que ele seja exibido
     if (!currentStatusInList) {
       const currentStatusOption = STATUS_OPTIONS.find(
         (s) => s.value === processo.status
@@ -466,7 +435,7 @@ const ProcessoDetail: React.FC = () => {
                 />
               </div>
               <div className="detail-card__item">
-                <span className="detail-card__label">Usuário</span>
+                <span className="detail-card__label">Criado por</span>
                 <span className="detail-card__value">
                   {processo.criado_por}
                 </span>
@@ -517,22 +486,6 @@ const ProcessoDetail: React.FC = () => {
                 </h4>
 
                 <form onSubmit={handleUpload} className="upload-form">
-                  <div className="form-group" style={{ marginBottom: "1rem" }}>
-                    <label htmlFor="document-type">Tipo de Documento</label>
-                    <select
-                      id="document-type"
-                      className="form-input"
-                      value={documentType}
-                      onChange={(e) => setDocumentType(e.target.value)}
-                      disabled={uploading}
-                    >
-                      {availableDocumentTypes.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
                   <label htmlFor="file-upload" className="upload-form__label">
                     <Upload size={18} />
                     <span>
@@ -586,21 +539,18 @@ const ProcessoDetail: React.FC = () => {
                 <li key={arquivo.id} className="files__item">
                   <File size={20} className="files__icon" />
                   <div className="files__info">
-                    {/* Botão que abre o modal em vez de link direto */}
-                    <button
-                      onClick={() => setPreviewFile(arquivo)}
-                      className="files__link-btn"
+                    <a
+                      href={arquivo.arquivo_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="files__link"
                     >
                       {arquivo.nome_atual}
-                    </button>
+                    </a>
                     <div className="files__metadata">
                       <span className="files__meta-item">
                         <User size={12} />
                         {arquivo.criado_por}
-                      </span>
-                      <span className="files__meta-item">
-                        <FileText size={12} />
-                         {DOCUMENT_TYPE_OPTIONS.find(opt => opt.value === arquivo.document_type)?.label || "Documento"}
                       </span>
                       <span className="files__meta-item">
                         <Calendar size={12} />
@@ -666,17 +616,6 @@ const ProcessoDetail: React.FC = () => {
           do sistema e do disco.
         </p>
       </Modal>
-
-      {/* Modal de Preview */}
-      {previewFile && (
-        <FilePreviewModal
-          isOpen={!!previewFile}
-          onClose={() => setPreviewFile(null)}
-          fileUrl={previewFile.arquivo_url}
-          fileName={previewFile.nome_atual}
-          canDownload={getCanDownloadFile(previewFile.document_type)}
-        />
-      )}
 
       {processo && (
         <StatusHistoryModal

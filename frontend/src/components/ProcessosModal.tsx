@@ -55,7 +55,7 @@ const ProcessosModal: React.FC<ProcessosModalProps> = ({
             <Search size={18} />
             <input
               type="text"
-              placeholder="Buscar por processo, CRDII, solicitante, data ou status..."
+              placeholder="Buscar por processo, CRDII, usuário, data ou status..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -69,7 +69,7 @@ const ProcessosModal: React.FC<ProcessosModalProps> = ({
                 <tr>
                   <th>CRDII</th>
                   <th>PROCESSOS</th>
-                  <th>SOLICITANTE</th>
+                  <th>USUÁRIO</th>
                   <th>DATA CRIAÇÃO</th>
                   <th>DATA STATUS</th>
                   <th>STATUS</th>
