@@ -5,4 +5,7 @@ class AuditConfig(AppConfig):
     name = 'audit'
 
     def ready(self):
-        import audit.signals
+        # Importa os signals para que eles sejam registrados quando o app carregar.
+        # Desabilitado temporariamente para evitar erros de transação se a tabela não existir.
+        # import audit.signals
+        pass
