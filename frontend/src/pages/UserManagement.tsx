@@ -102,7 +102,7 @@ const ROLE_DISPLAY_NAMES: Record<string, string> = {
   financeiro: "Financeiro",
   gestor: "Gestor",
   diretoria: "Diretoria",
-  dev: "Dev",
+  dev: "Desenvolvedor",
 };
 
 const UserManagement: React.FC = () => {
