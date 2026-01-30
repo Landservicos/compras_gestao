@@ -69,6 +69,7 @@ SHARED_APPS = [
     'django_tenants',
     'tenants',
     'users', 
+    'audit',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
