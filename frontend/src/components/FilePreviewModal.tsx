@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Modal from "./Modal";
-import { Download, FileText, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
+import { Download, FileText, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, RotateCcw } from "lucide-react"; // Added RotateCcw
 import { Document, Page, pdfjs } from 'react-pdf';
 import "../styles/filePreviewModal.css";
 import 'react-pdf/dist/Page/AnnotationLayer.css';
@@ -30,6 +30,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
   const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
+  const [rotation, setRotation] = useState(0); // Added rotation state
 
   const getFileType = (url: string) => {
     const extension = url.split(".").pop()?.toLowerCase();
@@ -57,16 +58,30 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
     setScale((prevScale) => Math.max(0.5, Math.min(3.0, prevScale + delta)));
   };
 
+  const handleRotate = () => { // Added rotation handler
+    setRotation((prevRotation) => (prevRotation + 90) % 360);
+  };
+
   const renderContent = () => {
     switch (fileType) {
       case "image":
         return (
-          <img
-            src={fileUrl}
-            alt={fileName}
-            className="file-preview-image"
-            onContextMenu={(e) => !canDownload && e.preventDefault()}
-          />
+          <div className="image-preview-wrapper">
+            <div className="image-controls">
+                <button onClick={handleRotate} className="control-btn" title="Girar Imagem">
+                    <RotateCcw size={18} />
+                </button>
+            </div>
+            <div className="image-container">
+              <img
+                src={fileUrl}
+                alt={fileName}
+                className="file-preview-image"
+                style={{ transform: `rotate(${rotation}deg)` }} // Apply rotation style
+                onContextMenu={(e) => !canDownload && e.preventDefault()}
+              />
+            </div>
+          </div>
         );
       case "pdf":
         return (
@@ -100,6 +115,9 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
                         <ZoomIn size={18} />
                     </button>
                 </div>
+                <button onClick={handleRotate} className="pdf-control-btn" title="Girar PDF" style={{ marginLeft: "0.5rem" }}>
+                    <RotateCcw size={18} />
+                </button>
             </div>
             
             <div className="pdf-document-container">
@@ -113,6 +131,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
                     <Page 
                         pageNumber={pageNumber} 
                         scale={scale} 
+                        rotate={rotation}
                         renderTextLayer={false} 
                         renderAnnotationLayer={false}
                     />

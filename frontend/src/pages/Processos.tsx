@@ -318,7 +318,7 @@ const Processos: React.FC = () => {
                 <th onClick={() => handleSort('crdii__nome')} style={{cursor: 'pointer'}}>
                     CRDII {getSortIcon('crdii__nome')}
                 </th>
-                <th>Solicitante</th>
+                <th>Usuário</th>
                 <th onClick={() => handleSort('data_criacao')} style={{cursor: 'pointer'}}>
                     Data Criação {getSortIcon('data_criacao')}
                 </th>
@@ -347,7 +347,7 @@ const Processos: React.FC = () => {
                     <td data-label="CRDII">
                         {processo.crdii_nome || "-"}
                     </td>
-                    <td data-label="Solicitante">
+                    <td data-label="Usuário">
                         <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
                             <User size={14} /> {processo.criado_por}
                         </div>

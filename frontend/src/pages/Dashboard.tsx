@@ -498,7 +498,7 @@ const Dashboard: React.FC = () => {
                 <div className="chart-container">
                   <div className="list-header">
                     <User size={20} className="list-header-icon" />
-                    <h3>Top Solicitantes</h3>
+                    <h3>Top Usuários</h3>
                   </div>
                   <ul className="list-content">
                     {extraStats.top_users.map((u, idx) => (

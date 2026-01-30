@@ -27,7 +27,7 @@ export const generateProcessosExcel = (
   const tableHeader = [
     "CRDII",
     "PROCESSOS",
-    "SOLICITANTE",
+    "USUÁRIO",
     "DATA CRIAÇÃO",
     "DATA STATUS",
     "STATUS",
@@ -69,7 +69,7 @@ export const generateProcessosExcel = (
   worksheet["!cols"] = [
     { wch: 20 }, // CRDII
     { wch: 40 }, // PROCESSOS
-    { wch: 20 }, // SOLICITANTE
+    { wch: 20 }, // USUÁRIO
     { wch: 15 }, // DATA CRIAÇÃO
     { wch: 20 }, // DATA STATUS
     { wch: 15 }, // STATUS
@@ -94,7 +94,7 @@ export const generateProcessosPDF = (
   const tableColumn = [
     "CRDII",
     "PROCESSOS",
-    "SOLICITANTE",
+    "USUÁRIO",
     "DATA CRIAÇÃO",
     "DATA STATUS",
     "STATUS",

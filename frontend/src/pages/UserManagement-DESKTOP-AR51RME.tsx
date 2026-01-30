@@ -68,14 +68,7 @@ export type PermissionSet = {
   can_delete_processo: boolean;
   can_change_status: boolean;
   can_upload_file: boolean;
-  can_download_file: boolean;
   can_delete_file: boolean;
-  can_upload_processo: boolean;
-  can_upload_nota_fiscal: boolean;
-  can_upload_boletos: boolean;
-  can_download_processo: boolean;
-  can_download_nota_fiscal: boolean;
-  can_download_boletos: boolean;
   can_edit_user: boolean;
   can_delete_user: boolean;
   can_create_tenant: boolean;
@@ -165,14 +158,7 @@ const UserManagement: React.FC = () => {
     can_delete_processo: false,
     can_change_status: false,
     can_upload_file: false,
-    can_download_file: false,
     can_delete_file: false,
-    can_upload_processo: false,
-    can_upload_nota_fiscal: false,
-    can_upload_boletos: false,
-    can_download_processo: false,
-    can_download_nota_fiscal: false,
-    can_download_boletos: false,
     can_edit_user: false,
     can_delete_user: false,
     can_create_tenant: false,
@@ -329,14 +315,6 @@ const UserManagement: React.FC = () => {
           (newPermissions[permKey] as any) = loadedPermissions[permKey];
         }
       }
-      // Adicionando carregamento para permissões de upload/download por tipo
-      newPermissions.can_upload_processo = loadedPermissions.can_upload_processo ?? false;
-      newPermissions.can_upload_nota_fiscal = loadedPermissions.can_upload_nota_fiscal ?? false;
-      newPermissions.can_upload_boletos = loadedPermissions.can_upload_boletos ?? false;
-      newPermissions.can_download_processo = loadedPermissions.can_download_processo ?? false;
-      newPermissions.can_download_nota_fiscal = loadedPermissions.can_download_nota_fiscal ?? false;
-      newPermissions.can_download_boletos = loadedPermissions.can_download_boletos ?? false;
-      
       newPermissions.allowed_crdii = Array.isArray(
         loadedPermissions.allowed_crdii
       )
@@ -456,14 +434,7 @@ const UserManagement: React.FC = () => {
       can_delete_processo: isChecked,
       can_change_status: isChecked,
       can_upload_file: isChecked,
-      can_download_file: isChecked,
       can_delete_file: isChecked,
-      can_upload_processo: isChecked,
-      can_upload_nota_fiscal: isChecked,
-      can_upload_boletos: isChecked,
-      can_download_processo: isChecked,
-      can_download_nota_fiscal: isChecked,
-      can_download_boletos: isChecked,
       can_edit_user: isChecked,
       can_delete_user: isChecked,
       can_create_tenant: isChecked,
@@ -821,7 +792,6 @@ const UserManagement: React.FC = () => {
         isOpen={isPermissionsModalOpen}
         onClose={closePermissionsModal}
         showFooter={false}
-        resizable={true}
       >
         {isPermissionsLoading ? (
           <p>Carregando...</p>
@@ -980,20 +950,7 @@ const UserManagement: React.FC = () => {
                       )
                     }
                   />{" "}
-                  Upload Geral
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={permissions.can_download_file || false}
-                    onChange={(e) =>
-                      handlePermissionChange(
-                        "can_download_file",
-                        e.target.checked
-                      )
-                    }
-                  />{" "}
-                  Download Geral
+                  Upload
                 </label>
                 <label>
                   <input
@@ -1056,90 +1013,6 @@ const UserManagement: React.FC = () => {
                     }
                   />{" "}
                   Criar Empresa
-                </label>
-              </div>
-
-              <div className="permissions-category">
-                <h4>Permissões de Arquivo por Tipo</h4>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={permissions.can_upload_processo || false}
-                    onChange={(e) =>
-                      handlePermissionChange(
-                        "can_upload_processo",
-                        e.target.checked
-                      )
-                    }
-                  />{" "}
-                  Upload (Processo)
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={permissions.can_download_processo || false}
-                    onChange={(e) =>
-                      handlePermissionChange(
-                        "can_download_processo",
-                        e.target.checked
-                      )
-                    }
-                  />{" "}
-                  Download (Processo)
-                </label>
-
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={permissions.can_upload_nota_fiscal || false}
-                    onChange={(e) =>
-                      handlePermissionChange(
-                        "can_upload_nota_fiscal",
-                        e.target.checked
-                      )
-                    }
-                  />{" "}
-                  Upload (Notas)
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={permissions.can_download_nota_fiscal || false}
-                    onChange={(e) =>
-                      handlePermissionChange(
-                        "can_download_nota_fiscal",
-                        e.target.checked
-                      )
-                    }
-                  />{" "}
-                  Download (Notas)
-                </label>
-
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={permissions.can_upload_boletos || false}
-                    onChange={(e) =>
-                      handlePermissionChange(
-                        "can_upload_boletos",
-                        e.target.checked
-                      )
-                    }
-                  />{" "}
-                  Upload (Forma de pagamento)
-                </label>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={permissions.can_download_boletos || false}
-                    onChange={(e) =>
-                      handlePermissionChange(
-                        "can_download_boletos",
-                        e.target.checked
-                      )
-                    }
-                  />{" "}
-                  Download (Forma de pagamento)
                 </label>
               </div>
 
