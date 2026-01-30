@@ -111,7 +111,11 @@ const StatCard: React.FC<StatCardProps> = ({
   </div>
 );
 
-const Dashboard: React.FC = () => {
+interface DashboardProps {
+    context?: 'COMPRAS' | 'DIVERSOS';
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ context = 'COMPRAS' }) => {
   // Dados do Dashboard
   const [stats, setStats] = useState<StatsData | null>(null);
   const [extraStats, setExtraStats] = useState<ExtraStatsData | null>(null);
@@ -148,6 +152,7 @@ const Dashboard: React.FC = () => {
     setError(null);
     try {
         const params = new URLSearchParams();
+        params.append('tipo', context);
         if (filterYear) params.append('year', filterYear);
         if (filterMonth) params.append('month', filterMonth);
         if (filterCrdii) params.append('crdii', filterCrdii);
@@ -169,7 +174,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
       fetchDashboardData();
-  }, [filterYear, filterMonth, filterCrdii]);
+  }, [filterYear, filterMonth, filterCrdii, context]);
 
 
   // --- Lógica do Modal ---
@@ -183,6 +188,7 @@ const Dashboard: React.FC = () => {
           // Busca processos filtrados pelo status clicado
           // Passamos também os filtros globais (Ano, Mês, CRDII) para manter consistência
           const params = new URLSearchParams();
+          params.append('tipo', context);
           
           if (statusKey !== 'total') {
               params.append('status', statusKey);
@@ -270,7 +276,7 @@ const Dashboard: React.FC = () => {
           <div>
             <div className="header-title-container">
               <BarChart2 size={28} />
-              <h1>Dashboard</h1>
+              <h1>Dashboard ({context === 'COMPRAS' ? 'Compras' : 'Diversos'})</h1>
             </div>
             <p className="header-subtitle">
               Visão geral, eficiência e atividade recente.

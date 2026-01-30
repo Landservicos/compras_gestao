@@ -17,9 +17,10 @@ def get_upload_path(instance, filename):
     # 2. Monta os nomes das subpastas
     crdii_nome = instance.processo.crdii.nome if instance.processo.crdii else "sem-crdii"
     processo_nome = instance.processo.nome
+    tipo_processo = instance.processo.tipo
     
-    # 3. Retorna o caminho completo: empresa/crdii/processo/arquivo
-    return f"{tenant_name}/{crdii_nome}/{processo_nome}/{filename}"
+    # 3. Retorna o caminho completo: empresa/TIPO/crdii/processo/arquivo
+    return f"{tenant_name}/{tipo_processo}/{crdii_nome}/{processo_nome}/{filename}"
 
 
 class CRDII(models.Model):
@@ -71,6 +72,12 @@ class Processo(models.Model):
     data_criacao = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
         max_length=32, choices=Status.choices, default=Status.NAO_CONCLUIDO
+    )
+
+    tipo = models.CharField(
+        max_length=20,
+        choices=[("COMPRAS", "Compras"), ("DIVERSOS", "Diversos")],
+        default="COMPRAS",
     )
     
     # Novos campos de data para rastreamento de status

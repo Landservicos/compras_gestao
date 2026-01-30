@@ -69,7 +69,6 @@ const ProcessosModal: React.FC<ProcessosModalProps> = ({
                 <tr>
                   <th>CRDII</th>
                   <th>PROCESSOS</th>
-                  <th>USUÁRIO</th>
                   <th>DATA CRIAÇÃO</th>
                   <th>DATA STATUS</th>
                   <th>STATUS</th>
@@ -88,7 +87,6 @@ const ProcessosModal: React.FC<ProcessosModalProps> = ({
                         {processo.nome}
                       </a>
                     </td>
-                    <td>{processo.criado_por}</td>
                     <td>
                       {new Date(processo.data_criacao).toLocaleDateString(
                         "pt-BR",

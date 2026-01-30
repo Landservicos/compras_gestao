@@ -57,6 +57,7 @@ class ProcessoSerializer(serializers.ModelSerializer):
             "crdii_nome",
             "nome",
             "slug",
+            "tipo",
             "criado_por",
             "data_criacao",
             "status",

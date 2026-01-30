@@ -28,7 +28,11 @@ interface User {
   };
 }
 
-const ProcessoCreate: React.FC = () => {
+interface ProcessoCreateProps {
+    context?: 'COMPRAS' | 'DIVERSOS';
+}
+
+const ProcessoCreate: React.FC<ProcessoCreateProps> = ({ context = 'COMPRAS' }) => {
   const [nome, setNome] = useState("");
   const [status, setStatus] = useState("nao_concluido");
   const [crdiiId, setCrdiiId] = useState<number | string>("");
@@ -36,6 +40,8 @@ const ProcessoCreate: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { user }: { user: User | null } = useAuth();
   const navigate = useNavigate();
+  
+  const backLink = context === 'COMPRAS' ? "/processos" : "/diversos/processos";
 
   useEffect(() => {
     const fetchCRDIIs = async () => {
@@ -72,10 +78,11 @@ const ProcessoCreate: React.FC = () => {
         nome,
         crdii: crdiiId,
         status,
+        tipo: context,
       });
 
       toast.dismiss(load);
-      navigate("/processos");
+      navigate(backLink);
       toast.success("Processo criado com sucesso!", { duration: 2000 });
     } catch (err: any) {
       toast.dismiss(load);
@@ -111,9 +118,9 @@ const ProcessoCreate: React.FC = () => {
       <header className="create-header">
         <div className="header-title">
           <FilePlus size={28} />
-          <h1>Criar Novo Processo</h1>
+          <h1>Criar Novo Processo ({context === 'COMPRAS' ? 'Compras' : 'Diversos'})</h1>
         </div>
-        <Link to="/processos" className="back-link">
+        <Link to={backLink} className="back-link">
           <ArrowLeft size={18} />
           Voltar para a lista
         </Link>

@@ -10,6 +10,7 @@ import {
   ChevronRight,
   ChevronDown,
   Briefcase,
+  Package,
 } from "lucide-react";
 import Modal from "./Modal";
 import { useAuth } from "../hooks/useAuth";
@@ -63,41 +64,126 @@ const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen }) => {
         )}
 
         <nav className="sidebar-nav">
-          {/* Link para Criar Processo: visível se for superuser ou tiver a permissão 'can_create_processo' */}
-          {(user?.is_superuser || user?.permissions?.can_create_processo) && (
-            <NavLink
-              to="/processos/novo"
-              className="nav-item"
-              data-tooltip="Criar Processo"
-            >
-              <FilePlus size={20} />
-              <span>Criar Processo</span>
-            </NavLink>
+          {/* Seção Compras */}
+          {(user?.is_superuser || user?.permissions?.can_create_processo || user?.permissions?.page_compras || user?.permissions?.page_dashboard) && (
+            <>
+              <button
+                className={`nav-item submenu-toggle ${openSubmenus["compras"] ? "open" : ""}`}
+                onClick={() => toggleSubmenu("compras")}
+                data-tooltip="Compras"
+              >
+                <Briefcase size={20} />
+                <span>Compras</span>
+                {!isCollapsed && (
+                  <ChevronDown
+                    size={16}
+                    className={`submenu-arrow ${openSubmenus["compras"] ? "rotated" : ""}`}
+                  />
+                )}
+              </button>
+
+              <div
+                className={`submenu-list ${openSubmenus["compras"] && !isCollapsed ? "expanded" : ""}`}
+              >
+                {/* Link para Criar Processo: visível se for superuser ou tiver a permissão 'can_create_processo' */}
+                {(user?.is_superuser || user?.permissions?.can_create_processo) && (
+                  <NavLink
+                    to="/processos/novo"
+                    className="nav-item sub-item"
+                    data-tooltip="Criar Processo"
+                  >
+                     <span className="sub-item-dot">•</span>
+                    <span>Criar Processo</span>
+                  </NavLink>
+                )}
+
+                {/* Link para Processos: visível se for superuser ou tiver a permissão 'page_compras' */}
+                {(user?.is_superuser || user?.permissions?.page_compras) && (
+                  <NavLink
+                    to="/processos"
+                    className="nav-item sub-item"
+                    data-tooltip="Processos"
+                    end
+                  >
+                     <span className="sub-item-dot">•</span>
+                    <span>Processos</span>
+                  </NavLink>
+                )}
+
+                {/* Link para Painel Financeiro: visível se for superuser ou tiver a permissão 'page_financeiro' */}
+                {(user?.is_superuser || user?.permissions?.page_dashboard) && (
+                  <NavLink
+                    to="/dashboard"
+                    className="nav-item sub-item"
+                    data-tooltip="Painel Dashboard"
+                  >
+                     <span className="sub-item-dot">•</span>
+                    <span>Painel Dashboard</span>
+                  </NavLink>
+                )}
+              </div>
+            </>
           )}
 
-          {/* Link para Processos: visível se for superuser ou tiver a permissão 'page_compras' */}
-          {(user?.is_superuser || user?.permissions?.page_compras) && (
-            <NavLink
-              to="/processos"
-              className="nav-item"
-              data-tooltip="Processos"
-              end
-            >
-              <FileText size={20} />
-              <span>Processos</span>
-            </NavLink>
-          )}
+          {/* Seção Diversos */}
+          {(user?.is_superuser || user?.permissions?.can_create_processo || user?.permissions?.page_compras || user?.permissions?.page_dashboard) && (
+            <>
+              <button
+                className={`nav-item submenu-toggle ${openSubmenus["diversos"] ? "open" : ""}`}
+                onClick={() => toggleSubmenu("diversos")}
+                data-tooltip="Diversos"
+              >
+                <Package size={20} />
+                <span>Diversos</span>
+                {!isCollapsed && (
+                  <ChevronDown
+                    size={16}
+                    className={`submenu-arrow ${openSubmenus["diversos"] ? "rotated" : ""}`}
+                  />
+                )}
+              </button>
 
-          {/* Link para Painel Financeiro: visível se for superuser ou tiver a permissão 'page_financeiro' */}
-          {(user?.is_superuser || user?.permissions?.page_dashboard) && (
-            <NavLink
-              to="/dashboard"
-              className="nav-item"
-              data-tooltip="Painel Dashboard"
-            >
-              <BarChart2 size={20} />
-              <span>Painel Dashboard</span>
-            </NavLink>
+              <div
+                className={`submenu-list ${openSubmenus["diversos"] && !isCollapsed ? "expanded" : ""}`}
+              >
+                {/* Link para Criar Processo (Diversos) */}
+                {(user?.is_superuser || user?.permissions?.can_create_processo) && (
+                  <NavLink
+                    to="/diversos/novo"
+                    className="nav-item sub-item"
+                    data-tooltip="Criar Processo"
+                  >
+                     <span className="sub-item-dot">•</span>
+                    <span>Criar Processo</span>
+                  </NavLink>
+                )}
+
+                {/* Link para Processos (Diversos) */}
+                {(user?.is_superuser || user?.permissions?.page_compras) && (
+                  <NavLink
+                    to="/diversos/processos"
+                    className="nav-item sub-item"
+                    data-tooltip="Processos"
+                    end
+                  >
+                     <span className="sub-item-dot">•</span>
+                    <span>Processos</span>
+                  </NavLink>
+                )}
+
+                {/* Link para Painel Dashboard (Diversos) */}
+                {(user?.is_superuser || user?.permissions?.page_dashboard) && (
+                  <NavLink
+                    to="/diversos/dashboard"
+                    className="nav-item sub-item"
+                    data-tooltip="Painel Dashboard"
+                  >
+                     <span className="sub-item-dot">•</span>
+                    <span>Painel Dashboard</span>
+                  </NavLink>
+                )}
+              </div>
+            </>
           )}
 
           {user?.is_superuser && (

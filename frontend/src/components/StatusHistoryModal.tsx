@@ -71,7 +71,7 @@ const StatusHistoryModal: React.FC<StatusHistoryModalProps> = ({ isOpen, onClose
                                         Status alterado de <strong>{item.status_anterior_display || 'Criação'}</strong> para <strong>{item.status_novo_display}</strong>
                                     </p>
                                     <p className="history-item-meta">
-                                        por <strong>{item.usuario_nome || 'Sistema'}</strong> em {new Date(item.data_mudanca).toLocaleString('pt-BR')}
+                                        por <strong>{item.usuario_nome}</strong> em {new Date(item.data_mudanca).toLocaleString('pt-BR')}
                                     </p>
                                 </div>
                             </li>

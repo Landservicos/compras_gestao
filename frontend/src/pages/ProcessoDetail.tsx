@@ -52,6 +52,7 @@ interface Processo {
   data_status: string;
   arquivos: Arquivo[];
   crdii_nome: string;
+  tipo?: string;
 }
 
 const StatusIcon: React.FC<{ status: string }> = ({ status }) => {
@@ -431,7 +432,10 @@ const ProcessoDetail: React.FC = () => {
         </div>
 
         <div className="header-actions">
-          <Link to="/processos" className="back-link">
+          <Link 
+            to={processo.tipo === 'DIVERSOS' ? "/diversos/processos" : "/processos"} 
+            className="back-link"
+          >
             <ArrowLeft size={18} />
             Voltar para a lista
           </Link>

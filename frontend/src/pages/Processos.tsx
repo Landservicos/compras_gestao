@@ -106,7 +106,11 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-const Processos: React.FC = () => {
+interface ProcessosProps {
+    context?: 'COMPRAS' | 'DIVERSOS';
+}
+
+const Processos: React.FC<ProcessosProps> = ({ context = 'COMPRAS' }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -123,10 +127,11 @@ const Processos: React.FC = () => {
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['processos', page, debouncedSearchTerm, statusFilter, crdiiFilter, userFilter, ordering],
+    queryKey: ['processos', page, debouncedSearchTerm, statusFilter, crdiiFilter, userFilter, ordering, context],
     queryFn: async () => {
       const params = new URLSearchParams();
       params.append('page', String(page));
+      params.append('tipo', context);
       
       if (debouncedSearchTerm) params.append('search', debouncedSearchTerm);
       if (statusFilter) params.append('status', statusFilter);
@@ -177,10 +182,10 @@ const Processos: React.FC = () => {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearchTerm, statusFilter, crdiiFilter, userFilter]);
+  }, [debouncedSearchTerm, statusFilter, crdiiFilter, userFilter, context]);
 
   const handleGenerateReport = (format: "pdf" | "excel") => {
-    const reportTitle = "Relatório de Processos (Página Atual)";
+    const reportTitle = `Relatório de Processos - ${context} (Página Atual)`;
     if (format === "pdf") {
       generateProcessosPDF(processos, reportTitle, logoEmpresa);
     } else {
@@ -210,7 +215,7 @@ const Processos: React.FC = () => {
       <header className="user-management-header">
         <div className="header-title">
           <Layers size={28} />
-          <h1>Meus Processos</h1>
+          <h1>Meus Processos ({context === 'COMPRAS' ? 'Compras' : 'Diversos'})</h1>
         </div>
         <div className="header-actions">
           <div className="search-bar">
@@ -318,12 +323,10 @@ const Processos: React.FC = () => {
                 <th onClick={() => handleSort('crdii__nome')} style={{cursor: 'pointer'}}>
                     CRDII {getSortIcon('crdii__nome')}
                 </th>
-                <th>Usuário</th>
                 <th onClick={() => handleSort('data_criacao')} style={{cursor: 'pointer'}}>
                     Data Criação {getSortIcon('data_criacao')}
                 </th>
                 <th>Data Status</th>
-                <th>Arquivos</th>
                 <th>Status</th>
                 <th>Ações</th>
                 </tr>
@@ -331,7 +334,7 @@ const Processos: React.FC = () => {
             <tbody>
                 {processos.length === 0 ? (
                 <tr>
-                    <td colSpan={8} className="no-results-cell">
+                    <td colSpan={6} className="no-results-cell">
                         <div className="no-results-container" style={{border: 'none', padding: '2rem'}}>
                             <Inbox size={32} className="no-results-icon" />
                             <p>{searchTerm || statusFilter ? "Nenhum processo encontrado." : "Nenhum processo criado."}</p>
@@ -347,11 +350,6 @@ const Processos: React.FC = () => {
                     <td data-label="CRDII">
                         {processo.crdii_nome || "-"}
                     </td>
-                    <td data-label="Usuário">
-                        <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
-                            <User size={14} /> {processo.criado_por}
-                        </div>
-                    </td>
                     <td data-label="Data Criação">
                         {new Date(processo.data_criacao).toLocaleString("pt-BR", {
                             day: "2-digit", month: "2-digit", year: "numeric", hour: '2-digit', minute: '2-digit'
@@ -361,11 +359,6 @@ const Processos: React.FC = () => {
                         {new Date(processo.data_status).toLocaleString("pt-BR", {
                             day: "2-digit", month: "2-digit", year: "numeric", hour: '2-digit', minute: '2-digit'
                         })}
-                    </td>
-                    <td data-label="Arquivos">
-                         <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>
-                            <File size={14} /> {processo.arquivos_count}
-                        </div>
                     </td>
                     <td data-label="Status">
                          <div style={{display: 'flex', alignItems: 'center', gap: '6px'}}>

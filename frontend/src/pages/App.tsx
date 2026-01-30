@@ -47,19 +47,22 @@ const AuthenticatedRoutes = () => {
           <Route element={<MainLayout />}>
             {/* Rota raiz (Dashboard) */}
             <Route element={<PermissionRoute permission="page_dashboard" />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/" element={<Dashboard context="COMPRAS" />} />
+              <Route path="/dashboard" element={<Dashboard context="COMPRAS" />} />
+              <Route path="/diversos/dashboard" element={<Dashboard context="DIVERSOS" />} />
             </Route>
 
             {/* Rotas de Processos */}
             <Route element={<PermissionRoute permission="page_compras" />}>
-              <Route path="/processos" element={<Processos />} />
+              <Route path="/processos" element={<Processos context="COMPRAS" />} />
+              <Route path="/diversos/processos" element={<Processos context="DIVERSOS" />} />
             </Route>
             <Route path="/processos/:id" element={<ProcessoDetail />} />
             <Route
               element={<PermissionRoute permission="can_create_processo" />}
             >
-              <Route path="/processos/novo" element={<ProcessoCreate />} />
+              <Route path="/processos/novo" element={<ProcessoCreate context="COMPRAS" />} />
+              <Route path="/diversos/novo" element={<ProcessoCreate context="DIVERSOS" />} />
             </Route>
 
             {/* Rotas de Gerenciamento */}

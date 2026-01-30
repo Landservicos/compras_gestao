@@ -97,9 +97,16 @@ class ProcessoViewSet(viewsets.ModelViewSet):
         permissions_dict = UserPermission.get_user_permissions_dict(_user, tenant)
         allowed_ids = permissions_dict.get('allowed_crdii', [])
 
-        return Processo.objects.prefetch_related("arquivos").filter(
+        queryset = Processo.objects.prefetch_related("arquivos").filter(
             Q(crdii__id__in=allowed_ids) | Q(crdii__isnull=True)
-        ).order_by("-data_criacao")
+        )
+
+        # Filtro por tipo (COMPRAS ou DIVERSOS)
+        tipo = self.request.query_params.get('tipo')
+        if tipo:
+            queryset = queryset.filter(tipo=tipo)
+
+        return queryset.order_by("-data_criacao")
 
     def update(self, request, *args, **kwargs):
         _user = request.user
@@ -252,6 +259,7 @@ class DashboardStatsView(APIView):
             year = request.query_params.get('year')
             month = request.query_params.get('month')
             crdii_id = request.query_params.get('crdii')
+            tipo = request.query_params.get('tipo')
             
             _user = request.user
             tenant = request.tenant
@@ -262,6 +270,9 @@ class DashboardStatsView(APIView):
                 permissions_dict = UserPermission.get_user_permissions_dict(_user, tenant)
                 allowed_ids = permissions_dict.get('allowed_crdii', [])
                 qs = qs.filter(Q(crdii__id__in=allowed_ids) | Q(crdii__isnull=True))
+
+            if tipo:
+                qs = qs.filter(tipo=tipo)
 
             if year:
                 qs = qs.filter(data_criacao__year=year)
